@@ -9,9 +9,7 @@ This repo is setup to run open-claw in a sandboxed container.
 * python 
 * open claw cli
 * claude cli
-* cursor cli
-* ollama
-* other development deps
+* other development dependancies
 
 # Copy Paste quick install
 
@@ -39,19 +37,6 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 make build
 make run
 make run-shell-clean
-```
-
-## GCP
-```bash
-curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz
-tar -xf google-cloud-cli-darwin-arm.tar.gz
-./google-cloud-sdk/install.sh
-```
-
-## local llm 
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
-ollama launch claude #choose a local model instead of a cloud based one
 ```
 
 ## Notes
