@@ -39,6 +39,19 @@ make run
 make run-shell-clean
 ```
 
+## GCP
+```bash
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz
+tar -xf google-cloud-cli-darwin-arm.tar.gz
+./google-cloud-sdk/install.sh
+```
+
+## local llm 
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+ollama launch claude #choose a local model instead of a cloud based one
+```
+
 ## Notes
 
 - The image is built and run as **amd64** (`linux/amd64`) for consistency (including on Apple Silicon).
