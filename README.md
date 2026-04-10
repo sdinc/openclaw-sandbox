@@ -9,7 +9,9 @@ This repo is setup to run open-claw in a sandboxed container.
 * python 
 * open claw cli
 * claude cli
-* other development dependancies
+* cursor cli
+* ollama
+* other development deps
 
 # Copy Paste quick install
 
