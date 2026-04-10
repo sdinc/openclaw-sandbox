@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install base OS deps, zsh, and packages needed to add Chrome repo.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends ca-certificates curl gh git gnupg zsh \
+  && apt-get install -y --no-install-recommends ca-certificates curl gnupg zsh \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome Stable (official repo + keyring).
@@ -42,8 +42,4 @@ RUN uv venv "${VIRTUAL_ENV}" --python 3.12 \
 # Install OpenClaw CLI (Node-based).
 RUN npm install -g openclaw@latest \
   && openclaw --version
-
-# Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
-ENTRYPOINT []
-CMD ["zsh"]
 
