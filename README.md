@@ -25,7 +25,7 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 
 - **Base image**: `node:24`
 - **Python**: Install **Python 3.12** via `uv` inside the image
-- **Shell**: `zsh` in-container (used by `make run-shell`)
+- **Shell**: `zsh` in-container (used by `make run`)
 - **Browser**: Google **Chrome Stable** (amd64)
 - **Web automation**: Python **Playwright** (configured to use system Chrome)
 - **OpenClaw**: `openclaw` CLI installed via npm
@@ -35,7 +35,8 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 
 ```bash
 make build
-make run-shell
+make run
+make run-shell-clean
 ```
 
 ## Notes
