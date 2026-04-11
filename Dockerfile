@@ -1,4 +1,8 @@
-FROM node:22.14.0
+
+# same version as openclaw open source repo would like to run 24 but there were a lot of npm warnings
+# FROM node:24
+ARG NODE_VERSION="22.14.0"
+FROM node:${NODE_VERSION}
 
 ARG WORKINGDEV=/workspace
 ARG HOME=${WORKINGDEV}
