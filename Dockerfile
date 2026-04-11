@@ -49,7 +49,7 @@ COPY package.json .
 # Install OpenClaw CLI (Node-based).
 RUN npm install -g pnpm@latest
 RUN pnpm install
-RUN openclaw --version
+#RUN openclaw --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
 ENTRYPOINT []
