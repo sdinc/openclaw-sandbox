@@ -1,0 +1,5 @@
+.npm-packages/*
+!.npm-packages/keep
+.venv/*
+!.venv/keep
+uv.lock
