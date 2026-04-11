@@ -1,5 +1,6 @@
 FROM node:24
 
+ARG WORKINGDEV=/workspace
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install base OS deps, zsh, and packages needed to add Chrome repo.
@@ -27,19 +28,18 @@ RUN uv python install 3.12 \
   && python3.12 --version
 
 # Install Python deps (Playwright) into a venv and install OS deps.
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="/opt/venv/bin:${PATH}"
-ENV UV_PROJECT_ENVIRONMENT=/opt/venv
+ENV VIRTUAL_ENV=${WORKINGDEV}/venv
+ENV PATH="${WORKINGDEV}/venv/bin:${PATH}"
+ENV UV_PROJECT_ENVIRONMENT=${WORKINGDEV}/venv
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 WORKDIR /opt/openclaw-sandbox
 COPY pyproject.toml /opt/openclaw-sandbox/pyproject.toml
 
-RUN uv venv "${VIRTUAL_ENV}" --python 3.12 \
-  && uv sync --project /opt/openclaw-sandbox --no-install-project --active \
-  && python -m playwright install-deps
+RUN uv venv "${VIRTUAL_ENV}" --python 3.12
+RUN uv sync --active
 
 # Install OpenClaw CLI (Node-based).
-RUN npm install -g openclaw@latest \
-  && openclaw --version
+RUN npm install -g openclaw@latest
+RUN openclaw --version
 
