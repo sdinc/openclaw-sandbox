@@ -1,6 +1,4 @@
-ARG NODE_VERSION=22.14.0
-
-FROM node:${NODE_VERSION}
+FROM node:22.14.0
 
 ARG WORKINGDEV=/workspace
 ARG HOME=${WORKINGDEV}
@@ -45,10 +43,12 @@ COPY pyproject.toml /opt/openclaw-sandbox/pyproject.toml
 RUN uv venv "${VIRTUAL_ENV}" --python 3.12
 RUN uv sync --active
 
-COPY .npmrc ${WORKINGDEV}/
+COPY .npmrc .
+COPY package.json .
 
 # Install OpenClaw CLI (Node-based).
-RUN npm install
+RUN npm install -g pnpm@latest
+RUN pnpm install
 RUN openclaw --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
