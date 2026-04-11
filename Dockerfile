@@ -48,7 +48,7 @@ RUN uv sync --active
 COPY .npmrc ${WORKINGDEV}/
 
 # Install OpenClaw CLI (Node-based).
-RUN npm install openclaw@latest
+RUN npm install
 RUN openclaw --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).

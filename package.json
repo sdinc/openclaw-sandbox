@@ -17,6 +17,7 @@
     "test": "openclaw --version"
   },
   "dependencies": {
+    "@openclaw": "latest",
     "@agentclientprotocol/sdk": "0.18.2",
     "@anthropic-ai/vertex-sdk": "^0.15.0",
     "@aws-sdk/client-bedrock": "3.1028.0",
