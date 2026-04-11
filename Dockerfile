@@ -8,6 +8,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends ca-certificates curl gh git gnupg zsh \
   && rm -rf /var/lib/apt/lists/*
 
+# run make sure the latest npm
+RUN npm install -g npm@11.12.1
+
 # Install Google Chrome Stable (official repo + keyring).
 RUN install -m 0755 -d /etc/apt/keyrings \
   && curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg \
