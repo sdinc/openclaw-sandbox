@@ -3,7 +3,8 @@
     "allow": [
       "Bash(make)",
       "Bash(git)",
-      "Bash(gh)"
+      "Bash(gh)",
+      "Bash(gh auth:*)"
     ]
   }
 }
