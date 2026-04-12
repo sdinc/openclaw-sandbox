@@ -3,3 +3,7 @@
 .venv/*
 !.venv/keep
 uv.lock
+google*
+.vscode
+
+
