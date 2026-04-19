@@ -52,5 +52,5 @@ run-shell-clean: ## Run zsh without mounting ~/.zshrc
 test: ## Smoke test: chrome, playwright, openclaw (amd64)
 	docker run --rm --platform=$(PLATFORM) $(IMAGE) google-chrome --version
 	docker run --rm --platform=$(PLATFORM) $(IMAGE) python -c "import playwright; print(\"playwright-ok\")"
-	##--docker run --rm --platform=$(PLATFORM) $(IMAGE) npm test
+	docker run --rm --platform=$(PLATFORM) $(IMAGE) npm test
 

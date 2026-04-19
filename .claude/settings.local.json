@@ -4,7 +4,9 @@
       "Bash(make)",
       "Bash(git)",
       "Bash(gh)",
-      "Bash(gh auth:*)"
+      "Bash(gh auth:*)",
+      "Bash(gh api:*)",
+      "Bash(git add *)"
     ]
   }
 }
