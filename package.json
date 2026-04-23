@@ -17,7 +17,7 @@
     "test": "openclaw --version"
   },
   "dependencies": {
-    "openclaw": "2026.4.10"
+    "openclaw": "2026.4.21"
   },
   "devDependencies": {
   },
