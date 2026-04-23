@@ -14,7 +14,7 @@ updates:
       interval: "daily"
     groups:
       monorepo-dependencies:
-        group-by: npm    
+        group-by: dependency-name  
   # Enable version updates for Docker
   - package-ecosystem: "docker"
     # Look for a `Dockerfile` in the `root` directory
@@ -24,7 +24,7 @@ updates:
       interval: "weekly"
     groups:
       monorepo-dependencies:
-        group-by: docker
+        group-by: dependency-name
   # Enable version updates python
   - package-ecosystem: "pip"
     # Look for a `Dockerfile` in the `root` directory
@@ -34,4 +34,4 @@ updates:
       interval: "weekly"
     groups:
       monorepo-dependencies:
-        group-by: pip    
+        group-by: dependency-name    
