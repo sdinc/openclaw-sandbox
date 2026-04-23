@@ -41,8 +41,8 @@ ENV PATH="${WORKINGDEV}/.venv/bin:${PATH}"
 ENV UV_PROJECT_ENVIRONMENT=${WORKINGDEV}/.venv
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
-WORKDIR /opt/openclaw-sandbox
-COPY pyproject.toml /opt/openclaw-sandbox/pyproject.toml
+WORKDIR "${WORKINGDEV}"
+COPY pyproject.toml pyproject.toml
 
 RUN uv venv "${VIRTUAL_ENV}" --python 3.12
 RUN uv sync --active
@@ -53,6 +53,8 @@ COPY package.json .
 # Install OpenClaw CLI (Node-based).
 RUN npm install -g pnpm@latest
 RUN pnpm install
+ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
+
 #xRUN openclaw --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
