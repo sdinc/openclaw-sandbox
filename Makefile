@@ -12,6 +12,8 @@ MOUNT_GITCONFIG ?= 1
 REQUIRE_TTY ?= 1
 .DEFAULT_GOAL := help
 
+CONTAINERDIR ?= /container-dir
+
 .PHONY: help
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_-]+:.*## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -36,8 +38,8 @@ run: ## Run zsh in the container (mounts repo + ~/.ssh + ~/.zshrc)
 	gh_mount="$$( [ "$(MOUNT_GH)" = "1" ] && printf '%s' '-v $(HOME)/.config/gh:/root/.config/gh' || true )"; \
 	gitconfig_mount="$$( [ "$(MOUNT_GITCONFIG)" = "1" ] && printf '%s' '-v $(HOME)/.gitconfig:/root/.gitconfig' || true )"; \
 	docker run --rm $$it_flags --platform=$(PLATFORM) \
-		-v "$(CURDIR)":/workspace \
-		-w /workspace \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
 		$$ssh_mount \
 		$$zshrc_mount \
 		$$gh_mount \
