@@ -58,7 +58,7 @@ RUN npm install -g pnpm@latest
 RUN pnpm install
 ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
 
-RUN openclaw --version
+RUN "${WORKINGDEV}/node_modules/.bin/openclaw --version"
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
 ENTRYPOINT []
