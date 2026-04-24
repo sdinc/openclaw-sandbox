@@ -2,11 +2,14 @@
 # same version as openclaw open source repo would like to run 24 but there were a lot of npm warnings
 # FROM node:24
 ARG NODE_VERSION="22.14.0"
+ARG WORKINGDEV=/opt/workspace
+ARG HOME=${WORKINGDEV}
+
 FROM node:${NODE_VERSION}
 
-ARG WORKINGDEV=/workspace
-ARG HOME=${WORKINGDEV}
 ENV DEBIAN_FRONTEND=noninteractive
+
+RUN mkdir -p "${WORKINGDEV}"
 
 # Install base OS deps, zsh, and packages needed to add Chrome repo.
 RUN apt-get update \
@@ -55,7 +58,7 @@ RUN npm install -g pnpm@latest
 RUN pnpm install
 ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
 
-#xRUN openclaw --version
+RUN openclaw --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
 ENTRYPOINT []
