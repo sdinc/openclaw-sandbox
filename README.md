@@ -8,12 +8,12 @@ This repo is setup to run open-claw in a sandboxed container.
 * gh github cli ( mainly writting nice PR descriptions and other github actions manipulation)
 
 
-# What is installs
+# What this installs
 * containerized amd64 development environment
 * python 
 * open claw cli
 * claude cli
-* other development dependancies
+* other development dependencies
 
 # Copy Paste quick install
 * with out paid you have to run auto and even then if you turn off all models except for ( cursors own model ( composer 2 ) still I burned through free use in 1 hour and my account does not reset for another month. 
@@ -23,7 +23,10 @@ This repo is setup to run open-claw in a sandboxed container.
 curl https://cursor.com/install -fsS | bash
 # requires paid subscription for api key 
 curl -fsSL https://claude.ai/install.sh | bash
+# OSX
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+# Linux
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
 ```
 
 # Build plan (WIP)
