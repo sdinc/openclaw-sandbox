@@ -2,14 +2,14 @@
 # same version as openclaw open source repo would like to run 24 but there were a lot of npm warnings
 # FROM node:24
 ARG NODE_VERSION="22.14.0"
-ARG WORKINGDEV=/opt/workspace
+ARG WORKINGDEV="/opt/workspace"
 ARG HOME=${WORKINGDEV}
 
 FROM node:${NODE_VERSION}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN mkdir -p "${WORKINGDEV}"
+RUN mkdir -p "${HOME}"
 
 # Install base OS deps, zsh, and packages needed to add Chrome repo.
 RUN apt-get update \
