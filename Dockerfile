@@ -34,15 +34,15 @@ ENV UV_INSTALL_DIR=/usr/local/bin
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install Python 3.12 and expose it on PATH as python3.12 and python3.
-RUN uv python install 3.12 --cache-dir ${WORKINGDEV}.venv \
+RUN uv python install 3.12 --cache-dir "${WORKINGDEV}.venv" \
   && ln -sf "$(uv python find 3.12)" /usr/local/bin/python3.12 \
   && ln -sf /usr/local/bin/python3.12 /usr/local/bin/python3 \
   && python3.12 --version
 
 # Install Python deps (Playwright) into a venv and install OS deps.
-ENV VIRTUAL_ENV=${WORKINGDEV}/.venv
+ENV VIRTUAL_ENV="${WORKINGDEV}/.venv"
 ENV PATH="${WORKINGDEV}/.venv/bin:${PATH}"
-ENV UV_PROJECT_ENVIRONMENT=${WORKINGDEV}/.venv
+ENV UV_PROJECT_ENVIRONMENT="${WORKINGDEV}/.venv"
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 WORKDIR "${WORKINGDEV}"
