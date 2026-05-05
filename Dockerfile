@@ -62,7 +62,7 @@ ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
 # Install IBM bob
 RUN curl -o bobshell.sh https://bob.ibm.com/download/bobshell.sh \
     && chmod 755 bobshell.sh \
-    && bash bobshell.sh \
+    && bash bobshell.sh --pm pnpm \
     && rm bobshell.sh
 
 RUN "${WORKINGDEV}/node_modules/.bin/openclaw --version"
