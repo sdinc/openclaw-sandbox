@@ -16,6 +16,7 @@ This repo is setup to run open-claw in a sandboxed container.
 * other development dependencies
 * IBM bob
 
+
 # Copy Paste quick install
 * with out paid you have to run auto and even then if you turn off all models except for ( cursors own model ( composer 2 ) still I burned through free use in 1 hour and my account does not reset for another month. 
 * the setup I ran was turn off all models except for composer 2, sonnet 4.6 in the cursor ui. Since I only use cursor-agent as I hate visual studio, my thinking was that cursor-agent in automode would switch between the two choosen models. Not sure that was the case. 
@@ -28,10 +29,6 @@ curl -fsSL https://claude.ai/install.sh | bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 # Linux
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
-
-# OSX and Linux
-```bash
-curl -fsSL https://bob.ibm.com/download/bobshell.sh | bash
 ```
 
 
