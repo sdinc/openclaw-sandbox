@@ -1,11 +1,12 @@
 
 # same version as openclaw open source repo would like to run 24 but there were a lot of npm warnings
 # FROM node:24
-ARG NODE_VERSION="22.14.0"
-ARG WORKINGDEV="/opt/workspace"
-ARG HOME=${WORKINGDEV}
+ARG NODE_VERSION="22.15.0"
 
 FROM node:${NODE_VERSION}
+
+ARG WORKINGDEV="/opt/workspace"
+ARG HOME=${WORKINGDEV}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -58,7 +59,14 @@ RUN npm install -g pnpm@latest
 RUN pnpm install
 ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
 
+# Install IBM bob
+RUN curl -o bobshell.sh https://bob.ibm.com/download/bobshell.sh \
+    && chmod 755 bobshell.sh \
+    && bash bobshell.sh \
+    && rm bobshell.sh
+
 RUN "${WORKINGDEV}/node_modules/.bin/openclaw --version"
+
 
 # Ensure `docker run <image> <cmd>` runs the command directly (not via Node entrypoint defaults).
 ENTRYPOINT []

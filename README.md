@@ -14,6 +14,7 @@ This repo is setup to run open-claw in a sandboxed container.
 * open claw cli
 * claude cli
 * other development dependencies
+* IBM bob
 
 # Copy Paste quick install
 * with out paid you have to run auto and even then if you turn off all models except for ( cursors own model ( composer 2 ) still I burned through free use in 1 hour and my account does not reset for another month. 
@@ -27,7 +28,12 @@ curl -fsSL https://claude.ai/install.sh | bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 # Linux
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+
+# OSX and Linux
+```bash
+curl -fsSL https://bob.ibm.com/download/bobshell.sh | bash
 ```
+
 
 # Build plan (WIP)
 
