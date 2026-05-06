@@ -77,10 +77,15 @@ endif
 test: ## Smoke test: chrome, playwright, openclaw (amd64)
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..."
+	google-chrome-stable --version
 	python -c "import playwright; print(\"playwright-ok\")"
 	npm test
 else
 	@echo "Running tests via docker..."
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) google-chrome-stable --version
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
@@ -89,7 +94,6 @@ else
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) npm test
-	# TODO: docker run --rm --platform=$(PLATFORM) $(IMAGE) google-chrome --version
 endif
 update:
 	claude update
