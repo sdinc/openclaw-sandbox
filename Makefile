@@ -28,11 +28,13 @@ help: ## Show this help
 build: ## Build the dev image using OpenClaw base
 	@cache_from=""; \
 	cache_to=""; \
+	docker_cmd="docker build"; \
 	if [ -n "$$GITHUB_ACTIONS" ]; then \
+		docker_cmd="docker buildx build --load"; \
 		cache_from="--cache-from type=local,src=/tmp/.buildx-cache"; \
 		cache_to="--cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max"; \
 	fi; \
-	docker build --platform=$(PLATFORM) \
+	$$docker_cmd --platform=$(PLATFORM) \
 		--build-arg OPENCLAW_VERSION=$(OPENCLAW_VERSION) \
 		--build-arg PLATFORM_ARCH=$(PLATFORM_ARCH) \
 		$$cache_from \
