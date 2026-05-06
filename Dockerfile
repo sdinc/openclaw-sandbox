@@ -6,7 +6,7 @@ ARG PLATFORM_ARCH="amd64"
 
 FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}-${PLATFORM_ARCH}
 
-LABEL org.opencontainers.image.description DESCRIPTION="Brody's OpenClaw sandbox with zsh, uv, and Python deps"
+LABEL org.opencontainers.image.description="Brody's OpenClaw sandbox with zsh, uv, and Python deps"
 
 # Switch to root for system package installation
 USER root
