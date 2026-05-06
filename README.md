@@ -32,15 +32,24 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
 ```
 
 
-# Build plan (WIP)
+# Build plan
 
 - **Base image**: `node:24`
 - **Python**: Install **Python 3.12** via `uv` inside the image
 - **Shell**: `zsh` in-container (used by `make run`)
-- **Browser**: Google **Chrome Stable** (amd64)
-- **Web automation**: Python **Playwright** (configured to use system Chrome)
+- **Browser**: Google **Chrome Stable** (amd64) - installed from official Google repository
+- **Web automation**: Python **Playwright** (configured to use system Chrome via `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`)
 - **OpenClaw**: `openclaw` CLI installed via npm
 - **Goal**: A minimal dev container that has Node 24 + Python 3.12 available (`python3.12` / `python3`)
+
+## Chrome & Playwright Configuration
+
+Chrome Stable is installed from Google's official repository and Playwright is configured to use it:
+- `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` - Skip downloading Playwright's bundled browsers
+- `PLAYWRIGHT_BROWSERS_PATH=0` - Use system browsers only
+- `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable` - Point to system Chrome
+
+This ensures consistent browser behavior and reduces image size by avoiding duplicate browser installations.
 
 # Usage
 
