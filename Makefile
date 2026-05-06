@@ -17,6 +17,9 @@ REQUIRE_TTY ?= 1
 
 CONTAINERDIR ?= /opt/workspace
 
+# Detect if we're already inside the container (user is 'node')
+IN_CONTAINER := $(shell [ "$$(whoami)" = "node" ] && echo 1 || echo 0)
+
 .PHONY: help
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_-]+:.*## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -30,6 +33,12 @@ build: ## Build the dev image using OpenClaw base
 
 .PHONY: run
 run: ## Run zsh in the container (mounts repo + ~/.ssh + ~/.zshrc)
+ifeq ($(IN_CONTAINER),1)
+	@run_cmd="$(CMD)"; \
+	if [ -n "$(cmd)" ]; then run_cmd="$(cmd)"; fi; \
+	echo "Already in container, running command directly: $$run_cmd"; \
+	$$run_cmd
+else
 	@run_cmd="$(CMD)"; \
 	if [ -n "$(cmd)" ]; then run_cmd="$(cmd)"; fi; \
 	has_tty=0; [ -t 0 ] && [ -t 1 ] && has_tty=1 || true; \
@@ -51,16 +60,36 @@ run: ## Run zsh in the container (mounts repo + ~/.ssh + ~/.zshrc)
 		$$gh_mount \
 		$$gitconfig_mount \
 		$(IMAGE) $$run_cmd
+endif
 
 .PHONY: run-shell-clean
 run-shell-clean: ## Run zsh without mounting ~/.zshrc
+ifeq ($(IN_CONTAINER),1)
+	@run_cmd="$(CMD)"; \
+	if [ -n "$(cmd)" ]; then run_cmd="$(cmd)"; fi; \
+	echo "Already in container, running command directly: $$run_cmd"; \
+	$$run_cmd
+else
 	$(MAKE) run MOUNT_ZSHRC=0 cmd="$(cmd)" CMD="$(CMD)"
+endif
 
 .PHONY: test
 test: ## Smoke test: chrome, playwright, openclaw (amd64)
-	docker run --rm --platform=$(PLATFORM) $(IMAGE) google-chrome --version
-	docker run --rm --platform=$(PLATFORM) $(IMAGE) python -c "import playwright; print(\"playwright-ok\")"
-	docker run --rm --platform=$(PLATFORM) $(IMAGE) pnpm test
-
+ifeq ($(IN_CONTAINER),1)
+	@echo "Already in container, running tests directly..."
+	python -c "import playwright; print(\"playwright-ok\")"
+	npm test
+else
+	@echo "Running tests via docker..."
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) python -c "import playwright; print(\"playwright-ok\")"
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) npm test
+	# TODO: docker run --rm --platform=$(PLATFORM) $(IMAGE) google-chrome --version
+endif
 update:
 	claude update

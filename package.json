@@ -1,0 +1,26 @@
+{
+  "name": "brody-openclaw",
+  "version": "0.0.1",
+  "description": "lots of stuff",
+  "keywords": [],
+  "homepage": "https://github.com/sdinc/openclaw-sandbox#readme",
+  "bugs": {
+    "url": "https://github.com/sdinc/openclaw-sandbox/issues"
+  },
+  "license": "MIT",
+  "author": "Brody",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sdinc/openclaw-sandbox.git"
+  },
+  "scripts": {
+    "test": "openclaw --version"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  }
+}

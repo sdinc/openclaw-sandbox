@@ -6,7 +6,7 @@ ARG PLATFORM_ARCH="amd64"
 
 FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}-${PLATFORM_ARCH}
 
-LABEL org.opencontainers.image.description DESCRIPTION="Brody's OpenClaw sandbox with zsh, gh, uv, and Python deps"
+LABEL org.opencontainers.image.description DESCRIPTION="Brody's OpenClaw sandbox with zsh, uv, and Python deps"
 
 # Switch to root for system package installation
 USER root
@@ -15,7 +15,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install additional tools: gh (GitHub CLI) and zsh
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends gh zsh \
+  && apt-get install -y --no-install-recommends gh zsh build-essential \
   && rm -rf /var/lib/apt/lists/*
 
 # Install uv for Python package management (as root)
