@@ -56,6 +56,8 @@ COPY package.json .
 
 # Install OpenClaw CLI (Node-based).
 RUN npm install -g pnpm@latest
+# Approve build scripts for openclaw and other packages that need them
+RUN pnpm config set enable-pre-post-scripts true
 RUN pnpm install
 ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
 
