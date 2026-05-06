@@ -26,9 +26,17 @@ help: ## Show this help
 
 .PHONY: build
 build: ## Build the dev image using OpenClaw base
+	@cache_from=""; \
+	cache_to=""; \
+	if [ -n "$$GITHUB_ACTIONS" ]; then \
+		cache_from="--cache-from type=local,src=/tmp/.buildx-cache"; \
+		cache_to="--cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max"; \
+	fi; \
 	docker build --platform=$(PLATFORM) \
 		--build-arg OPENCLAW_VERSION=$(OPENCLAW_VERSION) \
 		--build-arg PLATFORM_ARCH=$(PLATFORM_ARCH) \
+		$$cache_from \
+		$$cache_to \
 		-t $(IMAGE) .
 
 .PHONY: run
