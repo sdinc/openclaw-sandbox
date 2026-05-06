@@ -1,6 +1,9 @@
 IMAGE ?= openclaw-sandbox:dev
 #IMAGE ?= node:24
 
+# Node version - single source of truth
+NODE_VERSION ?= 22.15.0
+
 PLATFORM ?= linux/amd64
 CURDIR ?= `pwd`
 CMD ?= zsh
@@ -18,9 +21,22 @@ CONTAINERDIR ?= /container-dir
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_-]+:.*## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+.PHONY: check-node-version
+check-node-version: ## Validate Node version matches between Makefile and package.json
+	@PACKAGE_NODE_VERSION=$$(grep -o '"node": "[^"]*"' package.json | cut -d'"' -f4); \
+	if [ "$$PACKAGE_NODE_VERSION" != "$(NODE_VERSION)" ]; then \
+		echo "ERROR: Node version mismatch!"; \
+		echo "  Makefile NODE_VERSION: $(NODE_VERSION)"; \
+		echo "  package.json engines.node: $$PACKAGE_NODE_VERSION"; \
+		echo "Please update package.json engines.node to match Makefile NODE_VERSION"; \
+		exit 1; \
+	else \
+		echo "✓ Node version $(NODE_VERSION) matches in Makefile and package.json"; \
+	fi
+
 .PHONY: build
-build: ## Build the dev image
-	docker build --platform=$(PLATFORM) -t $(IMAGE) .
+build: check-node-version ## Build the dev image
+	docker build --platform=$(PLATFORM) --build-arg NODE_VERSION=$(NODE_VERSION) -t $(IMAGE) .
 
 .PHONY: run
 run: ## Run zsh in the container (mounts repo + ~/.ssh + ~/.zshrc)

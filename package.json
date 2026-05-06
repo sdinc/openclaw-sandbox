@@ -1,4 +1,5 @@
 {
+  "_comment": "NOTE: Keep engines.node version in sync with NODE_VERSION in Makefile",
   "name": "openclaw-brody",
   "version": "0.0.1",
   "description": "lots of stuff",
@@ -39,7 +40,7 @@
     "axios": "1.15.0"
   },
   "engines": {
-    "node": ">=22.15.0"
+    "node": "22.15.0"
   },
   "packageManager": "pnpm@10.32.1",
   "pnpm": {

@@ -1,6 +1,6 @@
 
-# same version as openclaw open source repo would like to run 24 but there were a lot of npm warnings
-# FROM node:24
+# Node version can be overridden via --build-arg NODE_VERSION=x.y.z
+# Default matches the version in Makefile
 ARG NODE_VERSION="22.15.0"
 
 FROM node:${NODE_VERSION}
@@ -56,8 +56,6 @@ COPY package.json .
 
 # Install OpenClaw CLI (Node-based).
 RUN npm install -g pnpm@latest
-# Approve build scripts for openclaw and other packages that need them
-RUN pnpm config set enable-pre-post-scripts true
 RUN pnpm install
 ENV PATH="${WORKINGDEV}/node_modules/.bin:${PATH}"
 
