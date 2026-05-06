@@ -1,5 +1,6 @@
 
 # Use official OpenClaw base image which already has openclaw, node, pnpm, etc.
+# Testing Docker cache performance
 # OpenClaw version can be overridden via --build-arg OPENCLAW_VERSION=x.y.z
 ARG OPENCLAW_VERSION="2026.5.6"
 ARG PLATFORM_ARCH="amd64"
