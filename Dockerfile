@@ -1,12 +1,13 @@
 
 # Use official OpenClaw base image which already has openclaw, node, pnpm, etc.
+# Testing Docker cache performance - full rebuild test
 # OpenClaw version can be overridden via --build-arg OPENCLAW_VERSION=x.y.z
 ARG OPENCLAW_VERSION="2026.5.6"
 ARG PLATFORM_ARCH="amd64"
 
 FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}-${PLATFORM_ARCH}
 
-LABEL org.opencontainers.image.description DESCRIPTION="Brody's OpenClaw sandbox with zsh, uv, and Python deps"
+LABEL org.opencontainers.image.description="Brody's OpenClaw sandbox with zsh, uv, and Python deps"
 
 # Switch to root for system package installation
 USER root
@@ -42,7 +43,7 @@ RUN apt-get update \
     xdg-utils \
   && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome Stable
+# Install Google Chrome Stable (testing cache with mid-file change)
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
   && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
   && apt-get update \
@@ -86,4 +87,4 @@ RUN openclaw --version
 # Ensure `docker run <image> <cmd>` runs the command directly
 ENTRYPOINT []
 CMD ["zsh"]
-
+# Testing cache layer performance - bottom-of-file change case (payload: coaching layer test)
