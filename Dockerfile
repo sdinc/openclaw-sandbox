@@ -87,4 +87,4 @@ RUN openclaw --version
 # Ensure `docker run <image> <cmd>` runs the command directly
 ENTRYPOINT []
 CMD ["zsh"]
-# Testing maximum cache utilization with bottom-of-file change
+# Testing cache layer performance - bottom-of-file change case (payload: coaching layer test)
