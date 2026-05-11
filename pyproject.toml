@@ -1,6 +1,7 @@
 [project]
 name = "openclaw-sandbox"
 version = "0.0.0"
+openclaw_version = "2026.5.7"
 requires-python = ">=3.12"
 dependencies = [
   "playwright",
