@@ -2,7 +2,7 @@ IMAGE ?= openclaw-sandbox:dev
 
 # OpenClaw version - NOTE: Dockerfile is the source of truth
 # This should match the version in Dockerfile FROM line
-OPENCLAW_VERSION ?= 2026.5.7
+OPENCLAW_VERSION ?= 2026.5.12
 
 PLATFORM ?= linux/amd64
 PLATFORM_ARCH ?= amd64
