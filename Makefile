@@ -84,8 +84,66 @@ else
 	$(MAKE) run MOUNT_ZSHRC=0 cmd="$(cmd)" CMD="$(CMD)"
 endif
 
+.PHONY: version-check
+version-check: ## Validate version consistency across all package files
+	@echo "🔍 Checking OpenClaw version consistency..."
+	@echo ""
+	@dockerfile_version=$$(grep -E '^FROM ghcr.io/openclaw/openclaw:' Dockerfile | sed -E 's/.*:([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/'); \
+	if [ -z "$$dockerfile_version" ]; then \
+		echo "❌ ERROR: Could not extract version from Dockerfile"; \
+		exit 1; \
+	fi; \
+	echo "📋 Source of Truth (Dockerfile): $$dockerfile_version"; \
+	echo ""; \
+	all_match=true; \
+	makefile_version=$$(grep -E '^OPENCLAW_VERSION \?=' Makefile | sed -E 's/.*= ([0-9]+\.[0-9]+\.[0-9]+).*/\1/'); \
+	if [ "$$makefile_version" = "$$dockerfile_version" ]; then \
+		echo "✅ Makefile: $$makefile_version (matches)"; \
+	else \
+		echo "❌ Makefile: $$makefile_version (expected $$dockerfile_version)"; \
+		all_match=false; \
+	fi; \
+	package_json_version=$$(grep -E '"openclaw_version"' package.json 2>/dev/null | sed -E 's/.*"openclaw_version": "([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'); \
+	if [ -z "$$package_json_version" ]; then \
+		echo "❌ package.json: openclaw_version field not found (expected $$dockerfile_version)"; \
+		all_match=false; \
+	elif [ "$$package_json_version" = "$$dockerfile_version" ]; then \
+		echo "✅ package.json: $$package_json_version (matches)"; \
+	else \
+		echo "❌ package.json: $$package_json_version (expected $$dockerfile_version)"; \
+		all_match=false; \
+	fi; \
+	pyproject_version=$$(grep -E 'openclaw_version = ' pyproject.toml 2>/dev/null | sed -E 's/.*= "([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'); \
+	if [ -z "$$pyproject_version" ]; then \
+		echo "❌ pyproject.toml: openclaw_version field not found (expected $$dockerfile_version)"; \
+		all_match=false; \
+	elif [ "$$pyproject_version" = "$$dockerfile_version" ]; then \
+		echo "✅ pyproject.toml: $$pyproject_version (matches)"; \
+	else \
+		echo "❌ pyproject.toml: $$pyproject_version (expected $$dockerfile_version)"; \
+		all_match=false; \
+	fi; \
+	echo ""; \
+	if [ "$$all_match" = "true" ]; then \
+		echo "✨ All versions match! Version consistency check passed."; \
+	else \
+		echo "💥 Version mismatch detected! Please update all files to match Dockerfile version $$dockerfile_version"; \
+		echo ""; \
+		echo "To fix, update the following:"; \
+		if [ "$$makefile_version" != "$$dockerfile_version" ]; then \
+			echo "  - Makefile: OPENCLAW_VERSION ?= $$dockerfile_version"; \
+		fi; \
+		if [ -z "$$package_json_version" ] || [ "$$package_json_version" != "$$dockerfile_version" ]; then \
+			echo "  - package.json: \"openclaw_version\": \"$$dockerfile_version\""; \
+		fi; \
+		if [ -z "$$pyproject_version" ] || [ "$$pyproject_version" != "$$dockerfile_version" ]; then \
+			echo "  - pyproject.toml: openclaw_version = \"$$dockerfile_version\""; \
+		fi; \
+		exit 1; \
+	fi
+
 .PHONY: test
-test: ## Smoke test: chrome, playwright, openclaw (amd64)
+test: version-check ## Smoke test: chrome, playwright, openclaw (amd64)
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..."
 	google-chrome-stable --version
@@ -106,5 +164,6 @@ else
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) npm test
 endif
+
 update:
 	claude update
