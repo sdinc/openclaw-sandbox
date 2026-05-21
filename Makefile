@@ -2,7 +2,7 @@ IMAGE ?= openclaw-sandbox:dev
 
 # OpenClaw version - NOTE: Dockerfile is the source of truth
 # This should match the version in Dockerfile FROM line
-OPENCLAW_VERSION ?= 2026.5.12
+OPENCLAW_VERSION ?= 2026.5.20
 
 PLATFORM ?= linux/amd64
 PLATFORM_ARCH ?= amd64
@@ -143,26 +143,127 @@ version-check: ## Validate version consistency across all package files
 	fi
 
 .PHONY: test
-test: version-check ## Smoke test: chrome, playwright, openclaw (amd64)
+test: version-check ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..."
+	@echo "=== Testing Chrome ==="
 	google-chrome-stable --version
-	python -c "import playwright; print(\"playwright-ok\")"
+	@echo ""
+	@echo "=== Testing Playwright ==="
+	python -c "import playwright; print(\"✅ Playwright import successful\")"
+	@echo ""
+	@echo "=== Testing Node.js ==="
+	node --version
+	npm --version
+	@echo ""
+	@echo "=== Testing Python ==="
+	python --version
+	pip --version
+	@echo ""
+	@echo "=== Testing OpenClaw CLI ==="
+	openclaw --version
+	@echo ""
+	@echo "=== Testing OpenClaw Python API ==="
+	python -c "from openclaw import OpenClaw; print(\"✅ OpenClaw Python import successful\")"
+	@echo ""
+	@echo "=== Running npm test suite ==="
 	npm test
+	@echo ""
+	@echo "✨ All tests passed!"
 else
 	@echo "Running tests via docker..."
+	@echo "=== Testing Chrome ==="
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) google-chrome-stable --version
+	@echo ""
+	@echo "=== Testing Playwright ==="
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "import playwright; print(\"playwright-ok\")"
+		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")"
+	@echo ""
+	@echo "=== Testing Node.js ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) sh -c "node --version && npm --version"
+	@echo ""
+	@echo "=== Testing Python ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) sh -c "python --version && pip --version"
+	@echo ""
+	@echo "=== Testing OpenClaw CLI ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) openclaw --version
+	@echo ""
+	@echo "=== Testing OpenClaw Python API ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) python -c "from openclaw import OpenClaw; print(\"✅ OpenClaw Python import successful\")"
+	@echo ""
+	@echo "=== Running npm test suite ==="
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) npm test
+	@echo ""
+	@echo "✨ All tests passed!"
+endif
+
+.PHONY: test-openclaw
+test-openclaw: ## Test OpenClaw-specific functionality
+ifeq ($(IN_CONTAINER),1)
+	@echo "Testing OpenClaw functionality..."
+	@echo "=== OpenClaw CLI Version ==="
+	openclaw --version
+	@echo ""
+	@echo "=== OpenClaw Python API ==="
+	python -c "from openclaw import OpenClaw; oc = OpenClaw(); print(f\"✅ OpenClaw initialized: {oc}\")"
+	@echo ""
+	@echo "=== OpenClaw Help ==="
+	openclaw --help
+else
+	@echo "Testing OpenClaw functionality via docker..."
+	@echo "=== OpenClaw CLI Version ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) openclaw --version
+	@echo ""
+	@echo "=== OpenClaw Python API ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) python -c "from openclaw import OpenClaw; oc = OpenClaw(); print(f\"✅ OpenClaw initialized: {oc}\")"
+	@echo ""
+	@echo "=== OpenClaw Help ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) openclaw --help
+endif
+
+.PHONY: test-quick
+test-quick: ## Quick smoke test (no version-check)
+ifeq ($(IN_CONTAINER),1)
+	@echo "Quick smoke test..."
+	google-chrome-stable --version
+	python -c "import playwright; print(\"playwright-ok\")"
+	openclaw --version
+	npm test
+else
+	@echo "Quick smoke test via docker..."
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) sh -c "google-chrome-stable --version && python -c 'import playwright; print(\"playwright-ok\")' && openclaw --version && npm test"
 endif
 
 update:
