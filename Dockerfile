@@ -7,7 +7,7 @@
 #ARG PLATFORM_ARCH="amd64"
 #FROM ghcr.io/openclaw/openclaw:${OPENCLAW_VERSION}-${PLATFORM_ARCH}
 
-FROM ghcr.io/openclaw/openclaw:2026.5.12-amd64
+FROM ghcr.io/openclaw/openclaw:2026.5.19-amd64
 
 LABEL org.opencontainers.image.description="Brody's OpenClaw sandbox with zsh, uv, and Python deps"
 
