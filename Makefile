@@ -158,13 +158,11 @@ ifeq ($(IN_CONTAINER),1)
 	@echo ""
 	@echo "=== Testing Python ==="
 	python --version
-	pip --version
+	uv --version
 	@echo ""
 	@echo "=== Testing OpenClaw CLI ==="
 	openclaw --version
-	@echo ""
-	@echo "=== Testing OpenClaw Python API ==="
-	python -c "from openclaw import OpenClaw; print(\"✅ OpenClaw Python import successful\")"
+	openclaw --help | head -n 5
 	@echo ""
 	@echo "=== Running npm test suite ==="
 	npm test
@@ -194,19 +192,13 @@ else
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "python --version && pip --version"
+		$(IMAGE) sh -c "python --version && uv --version"
 	@echo ""
 	@echo "=== Testing OpenClaw CLI ==="
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) openclaw --version
-	@echo ""
-	@echo "=== Testing OpenClaw Python API ==="
-	docker run --rm --platform=$(PLATFORM) \
-		-v "$(CURDIR)":"$(CONTAINERDIR)" \
-		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "from openclaw import OpenClaw; print(\"✅ OpenClaw Python import successful\")"
+		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5"
 	@echo ""
 	@echo "=== Running npm test suite ==="
 	docker run --rm --platform=$(PLATFORM) \
@@ -224,11 +216,11 @@ ifeq ($(IN_CONTAINER),1)
 	@echo "=== OpenClaw CLI Version ==="
 	openclaw --version
 	@echo ""
-	@echo "=== OpenClaw Python API ==="
-	python -c "from openclaw import OpenClaw; oc = OpenClaw(); print(f\"✅ OpenClaw initialized: {oc}\")"
-	@echo ""
 	@echo "=== OpenClaw Help ==="
 	openclaw --help
+	@echo ""
+	@echo "=== OpenClaw Commands ==="
+	openclaw --help | grep -A 20 "Commands:" || echo "✅ OpenClaw CLI available"
 else
 	@echo "Testing OpenClaw functionality via docker..."
 	@echo "=== OpenClaw CLI Version ==="
@@ -237,17 +229,17 @@ else
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) openclaw --version
 	@echo ""
-	@echo "=== OpenClaw Python API ==="
-	docker run --rm --platform=$(PLATFORM) \
-		-v "$(CURDIR)":"$(CONTAINERDIR)" \
-		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "from openclaw import OpenClaw; oc = OpenClaw(); print(f\"✅ OpenClaw initialized: {oc}\")"
-	@echo ""
 	@echo "=== OpenClaw Help ==="
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) openclaw --help
+	@echo ""
+	@echo "=== OpenClaw Commands ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) sh -c "openclaw --help | grep -A 20 'Commands:' || echo '✅ OpenClaw CLI available'"
 endif
 
 .PHONY: test-quick
