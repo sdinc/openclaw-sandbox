@@ -46,6 +46,36 @@ build: ## Build the dev image using OpenClaw base
 		$$cache_to \
 		-t $(IMAGE) .
 
+.PHONY: build-cached
+build-cached: ## Build with buildx cache (requires buildx builder setup)
+	@echo "🔨 Building with buildx cache..."
+	@if ! docker buildx ls | grep -q "openclaw-builder"; then \
+		echo "📦 Creating buildx builder 'openclaw-builder'..."; \
+		docker buildx create --name openclaw-builder --driver docker-container --use; \
+	else \
+		echo "✅ Using existing buildx builder 'openclaw-builder'"; \
+		docker buildx use openclaw-builder; \
+	fi
+	@mkdir -p /tmp/.buildx-cache
+	docker buildx build --load --platform=$(PLATFORM) \
+		--build-arg OPENCLAW_VERSION=$(OPENCLAW_VERSION) \
+		--build-arg PLATFORM_ARCH=$(PLATFORM_ARCH) \
+		--cache-from type=local,src=/tmp/.buildx-cache \
+		--cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
+		-t $(IMAGE) .
+	@echo "♻️  Rotating cache..."
+	@rm -rf /tmp/.buildx-cache
+	@mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+	@echo "✨ Build complete with cache!"
+
+.PHONY: build-cached-cleanup
+build-cached-cleanup: ## Remove buildx builder and cache
+	@echo "🧹 Cleaning up buildx builder and cache..."
+	-docker buildx rm openclaw-builder 2>/dev/null || echo "  ℹ️  Builder not found"
+	-rm -rf /tmp/.buildx-cache /tmp/.buildx-cache-new 2>/dev/null || echo "  ℹ️  Cache not found"
+	@echo "✨ Cleanup complete!"
+
+
 .PHONY: run
 run: ## Run zsh in the container (mounts repo + ~/.ssh + ~/.zshrc)
 ifeq ($(IN_CONTAINER),1)
