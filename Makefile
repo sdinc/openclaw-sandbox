@@ -202,7 +202,7 @@ else
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5 && exit 1" && \
+		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5" && \
 	echo "" && \
 	echo "=== Running npm test suite ===" && \
 	docker run --rm --platform=$(PLATFORM) \
