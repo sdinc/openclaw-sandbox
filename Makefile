@@ -119,7 +119,7 @@ else
 endif
 
 .PHONY: version-check
-version-check: ## Validate version consistency across all package files
+version-check:
 	@echo "🔍 Checking OpenClaw version consistency..."
 	@echo ""
 	@dockerfile_version=$$(grep -E '^FROM ghcr.io/openclaw/openclaw:' Dockerfile | sed -E 's/.*:([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/'); \
@@ -177,7 +177,7 @@ version-check: ## Validate version consistency across all package files
 	fi
 
 .PHONY: test
-test: version-check ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \
@@ -244,7 +244,7 @@ else
 endif
 
 .PHONY: test-openclaw
-test-openclaw: ## Test OpenClaw-specific functionality
+test-openclaw:
 ifeq ($(IN_CONTAINER),1)
 	@echo "Testing OpenClaw functionality..."
 	@echo "=== OpenClaw CLI Version ==="
@@ -277,7 +277,7 @@ else
 endif
 
 .PHONY: test-quick
-test-quick: ## Quick smoke test (no version-check)
+test-quick:
 ifeq ($(IN_CONTAINER),1)
 	@echo "Quick smoke test..."
 	google-chrome-stable --version
