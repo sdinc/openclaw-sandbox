@@ -145,69 +145,70 @@ version-check: ## Validate version consistency across all package files
 .PHONY: test
 test: version-check ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
-	@echo "Already in container, running tests directly..."
-	@echo "=== Testing Chrome ==="
-	google-chrome-stable --version
-	@echo ""
-	@echo "=== Testing Playwright ==="
-	python -c "import playwright; print(\"✅ Playwright import successful\")"
-	@echo ""
-	@echo "=== Testing Node.js ==="
-	node --version
-	npm --version
-	@echo ""
-	@echo "=== Testing Python ==="
-	python --version
-	uv --version
-	@echo ""
-	@echo "=== Testing OpenClaw CLI ==="
-	openclaw --version
-	openclaw --help | head -n 5
-	openclaw --this-will-fail-intentionally
-	@echo ""
-	@echo "=== Running npm test suite ==="
-	npm test
-	@echo ""
-	@echo "✨ All tests passed!"
+	@set -e; \
+	echo "Already in container, running tests directly..."; \
+	echo "=== Testing Chrome ==="; \
+	google-chrome-stable --version; \
+	echo ""; \
+	echo "=== Testing Playwright ==="; \
+	python -c "import playwright; print(\"✅ Playwright import successful\")"; \
+	echo ""; \
+	echo "=== Testing Node.js ==="; \
+	node --version; \
+	npm --version; \
+	echo ""; \
+	echo "=== Testing Python ==="; \
+	python --version; \
+	uv --version; \
+	echo ""; \
+	echo "=== Testing OpenClaw CLI ==="; \
+	openclaw --version; \
+	openclaw --help | head -n 5; \
+	echo ""; \
+	echo "=== Running npm test suite ==="; \
+	npm test; \
+	echo ""; \
+	echo "✨ All tests passed!"
 else
-	@echo "Running tests via docker..."
-	@echo "=== Testing Chrome ==="
+	@set -e; \
+	echo "Running tests via docker..."; \
+	echo "=== Testing Chrome ==="; \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) google-chrome-stable --version
-	@echo ""
-	@echo "=== Testing Playwright ==="
+		$(IMAGE) google-chrome-stable --version; \
+	echo ""; \
+	echo "=== Testing Playwright ==="; \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")"
-	@echo ""
-	@echo "=== Testing Node.js ==="
+		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")"; \
+	echo ""; \
+	echo "=== Testing Node.js ==="; \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "node --version && npm --version"
-	@echo ""
-	@echo "=== Testing Python ==="
+		$(IMAGE) sh -c "node --version && npm --version"; \
+	echo ""; \
+	echo "=== Testing Python ==="; \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "python --version && uv --version"
-	@echo ""
-	@echo "=== Testing OpenClaw CLI ==="
+		$(IMAGE) sh -c "python --version && uv --version"; \
+	echo ""; \
+	echo "=== Testing OpenClaw CLI ==="; \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5"
-	@echo ""
-	@echo "=== Running npm test suite ==="
+		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5"; \
+	echo ""; \
+	echo "=== Running npm test suite ==="; \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) npm test
-	@echo ""
-	@echo "✨ All tests passed!"
+		$(IMAGE) npm test; \
+	echo ""; \
+	echo "✨ All tests passed!"
 endif
 
 .PHONY: test-openclaw
