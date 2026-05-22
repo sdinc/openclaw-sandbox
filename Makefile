@@ -16,6 +16,10 @@ MOUNT_GITCONFIG ?= 1
 REQUIRE_TTY ?= 1
 .DEFAULT_GOAL := help
 
+# Enable pipefail and exit on error for all recipes
+SHELL := /bin/bash
+.SHELLFLAGS := -e -o pipefail -c
+
 CONTAINERDIR ?= /opt/workspace
 
 # Detect if we're already inside the container (user is 'node')
@@ -145,69 +149,67 @@ version-check: ## Validate version consistency across all package files
 .PHONY: test
 test: version-check ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
-	@set -e; \
-	echo "Already in container, running tests directly..."; \
-	echo "=== Testing Chrome ==="; \
-	google-chrome-stable --version; \
-	echo ""; \
-	echo "=== Testing Playwright ==="; \
-	python -c "import playwright; print(\"✅ Playwright import successful\")"; \
-	echo ""; \
-	echo "=== Testing Node.js ==="; \
-	node --version; \
-	npm --version; \
-	echo ""; \
-	echo "=== Testing Python ==="; \
-	python --version; \
-	uv --version; \
-	echo ""; \
-	echo "=== Testing OpenClaw CLI ==="; \
-	openclaw --version; \
-	openclaw --help | head -n 5; \
-	echo ""; \
-	echo "=== Running npm test suite ==="; \
-	npm test; \
-	echo ""; \
+	@echo "Already in container, running tests directly..." && \
+	echo "=== Testing Chrome ===" && \
+	google-chrome-stable --version && \
+	echo "" && \
+	echo "=== Testing Playwright ===" && \
+	python -c "import playwright; print(\"✅ Playwright import successful\")" && \
+	echo "" && \
+	echo "=== Testing Node.js ===" && \
+	node --version && \
+	npm --version && \
+	echo "" && \
+	echo "=== Testing Python ===" && \
+	python --version && \
+	uv --version && \
+	echo "" && \
+	echo "=== Testing OpenClaw CLI ===" && \
+	openclaw --version && \
+	openclaw --help | head -n 5 && \
+	echo "" && \
+	echo "=== Running npm test suite ===" && \
+	npm test && \
+	echo "" && \
 	echo "✨ All tests passed!"
 else
-	@set -e; \
-	echo "Running tests via docker..."; \
-	echo "=== Testing Chrome ==="; \
+	@echo "Running tests via docker..." && \
+	echo "=== Testing Chrome ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) google-chrome-stable --version; \
-	echo ""; \
-	echo "=== Testing Playwright ==="; \
+		$(IMAGE) google-chrome-stable --version && \
+	echo "" && \
+	echo "=== Testing Playwright ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")"; \
-	echo ""; \
-	echo "=== Testing Node.js ==="; \
+		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")" && \
+	echo "" && \
+	echo "=== Testing Node.js ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "node --version && npm --version"; \
-	echo ""; \
-	echo "=== Testing Python ==="; \
+		$(IMAGE) sh -c "node --version && npm --version" && \
+	echo "" && \
+	echo "=== Testing Python ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "python --version && uv --version"; \
-	echo ""; \
-	echo "=== Testing OpenClaw CLI ==="; \
+		$(IMAGE) sh -c "python --version && uv --version" && \
+	echo "" && \
+	echo "=== Testing OpenClaw CLI ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5"; \
-	echo ""; \
-	echo "=== Running npm test suite ==="; \
+		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5" && \
+	echo "" && \
+	echo "=== Running npm test suite ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) npm test; \
-	echo ""; \
+		$(IMAGE) npm test && \
+	echo "" && \
 	echo "✨ All tests passed!"
 endif
 
