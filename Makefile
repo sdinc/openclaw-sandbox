@@ -262,5 +262,21 @@ else
 		$(IMAGE) sh -c "google-chrome-stable --version && python -c 'import playwright; print(\"playwright-ok\")' && openclaw --version && npm test"
 endif
 
+.PHONY: clean
+clean: ## Remove generated files and local Docker images
+	@echo "🧹 Cleaning up..."
+	@echo "Removing Docker image: $(IMAGE)"
+	-docker rmi $(IMAGE) 2>/dev/null || echo "  ℹ️  Image $(IMAGE) not found (already clean)"
+	@echo "Removing node_modules..."
+	-rm -rf node_modules 2>/dev/null || echo "  ℹ️  node_modules not found"
+	@echo "Removing package-lock.json..."
+	-rm -f package-lock.json 2>/dev/null || echo "  ℹ️  package-lock.json not found"
+	@echo "Removing Python cache..."
+	-find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	-find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo "Removing .pytest_cache..."
+	-rm -rf .pytest_cache 2>/dev/null || echo "  ℹ️  .pytest_cache not found"
+	@echo "✨ Cleanup complete!"
+
 update:
 	claude update
