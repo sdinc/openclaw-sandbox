@@ -163,6 +163,7 @@ ifeq ($(IN_CONTAINER),1)
 	@echo "=== Testing OpenClaw CLI ==="
 	openclaw --version
 	openclaw --help | head -n 5
+	openclaw --this-will-fail-intentionally
 	@echo ""
 	@echo "=== Running npm test suite ==="
 	npm test
