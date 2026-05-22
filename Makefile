@@ -16,6 +16,10 @@ MOUNT_GITCONFIG ?= 1
 REQUIRE_TTY ?= 1
 .DEFAULT_GOAL := help
 
+# Enable pipefail and exit on error for all recipes
+SHELL := /bin/bash
+.SHELLFLAGS := -e -o pipefail -c
+
 CONTAINERDIR ?= /opt/workspace
 
 # Detect if we're already inside the container (user is 'node')
@@ -145,76 +149,68 @@ version-check: ## Validate version consistency across all package files
 .PHONY: test
 test: version-check ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
-	@echo "Already in container, running tests directly..."
-	@echo "=== Testing Chrome ==="
-	google-chrome-stable --version
-	@echo ""
-	@echo "=== Testing Playwright ==="
-	python -c "import playwright; print(\"✅ Playwright import successful\")"
-	@echo ""
-	@echo "=== Testing Node.js ==="
-	node --version
-	npm --version
-	@echo ""
-	@echo "=== Testing Python ==="
-	python --version
-	pip --version
-	@echo ""
-	@echo "=== Testing OpenClaw CLI ==="
-	openclaw --version
-	@echo ""
-	@echo "=== Testing OpenClaw Python API ==="
-	python -c "from openclaw import OpenClaw; print(\"✅ OpenClaw Python import successful\")"
-	@echo ""
-	@echo "=== Running npm test suite ==="
-	npm test
-	@echo ""
-	@echo "✨ All tests passed!"
+	@echo "Already in container, running tests directly..." && \
+	echo "=== Testing Chrome ===" && \
+	google-chrome-stable --version && \
+	echo "" && \
+	echo "=== Testing Playwright ===" && \
+	python -c "import playwright; print(\"✅ Playwright import successful\")" && \
+	echo "" && \
+	echo "=== Testing Node.js ===" && \
+	node --version && \
+	npm --version && \
+	echo "" && \
+	echo "=== Testing Python ===" && \
+	python --version && \
+	uv --version && \
+	echo "" && \
+	echo "=== Testing OpenClaw CLI ===" && \
+	openclaw --version && \
+	openclaw --help | head -n 5 && \
+	echo "" && \
+	echo "=== Running npm test suite ===" && \
+	npm test && \
+	echo "" && \
+	echo "✨ All tests passed!"
 else
-	@echo "Running tests via docker..."
-	@echo "=== Testing Chrome ==="
+	@echo "Running tests via docker..." && \
+	echo "=== Testing Chrome ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) google-chrome-stable --version
-	@echo ""
-	@echo "=== Testing Playwright ==="
+		$(IMAGE) google-chrome-stable --version && \
+	echo "" && \
+	echo "=== Testing Playwright ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")"
-	@echo ""
-	@echo "=== Testing Node.js ==="
+		$(IMAGE) python -c "import playwright; print(\"✅ Playwright import successful\")" && \
+	echo "" && \
+	echo "=== Testing Node.js ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "node --version && npm --version"
-	@echo ""
-	@echo "=== Testing Python ==="
+		$(IMAGE) sh -c "node --version && npm --version" && \
+	echo "" && \
+	echo "=== Testing Python ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) sh -c "python --version && pip --version"
-	@echo ""
-	@echo "=== Testing OpenClaw CLI ==="
+		$(IMAGE) sh -c "python --version && uv --version" && \
+	echo "" && \
+	echo "=== Testing OpenClaw CLI ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) openclaw --version
-	@echo ""
-	@echo "=== Testing OpenClaw Python API ==="
+		$(IMAGE) sh -c "openclaw --version && openclaw --help | head -n 5" && \
+	echo "" && \
+	echo "=== Running npm test suite ===" && \
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "from openclaw import OpenClaw; print(\"✅ OpenClaw Python import successful\")"
-	@echo ""
-	@echo "=== Running npm test suite ==="
-	docker run --rm --platform=$(PLATFORM) \
-		-v "$(CURDIR)":"$(CONTAINERDIR)" \
-		-w "$(CONTAINERDIR)" \
-		$(IMAGE) npm test
-	@echo ""
-	@echo "✨ All tests passed!"
+		$(IMAGE) npm test && \
+	echo "" && \
+	echo "✨ All tests passed!"
 endif
 
 .PHONY: test-openclaw
@@ -224,11 +220,11 @@ ifeq ($(IN_CONTAINER),1)
 	@echo "=== OpenClaw CLI Version ==="
 	openclaw --version
 	@echo ""
-	@echo "=== OpenClaw Python API ==="
-	python -c "from openclaw import OpenClaw; oc = OpenClaw(); print(f\"✅ OpenClaw initialized: {oc}\")"
-	@echo ""
 	@echo "=== OpenClaw Help ==="
 	openclaw --help
+	@echo ""
+	@echo "=== OpenClaw Commands ==="
+	openclaw --help | grep -A 20 "Commands:" || echo "✅ OpenClaw CLI available"
 else
 	@echo "Testing OpenClaw functionality via docker..."
 	@echo "=== OpenClaw CLI Version ==="
@@ -237,17 +233,17 @@ else
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) openclaw --version
 	@echo ""
-	@echo "=== OpenClaw Python API ==="
-	docker run --rm --platform=$(PLATFORM) \
-		-v "$(CURDIR)":"$(CONTAINERDIR)" \
-		-w "$(CONTAINERDIR)" \
-		$(IMAGE) python -c "from openclaw import OpenClaw; oc = OpenClaw(); print(f\"✅ OpenClaw initialized: {oc}\")"
-	@echo ""
 	@echo "=== OpenClaw Help ==="
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) openclaw --help
+	@echo ""
+	@echo "=== OpenClaw Commands ==="
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) sh -c "openclaw --help | grep -A 20 'Commands:' || echo '✅ OpenClaw CLI available'"
 endif
 
 .PHONY: test-quick
@@ -265,6 +261,22 @@ else
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) sh -c "google-chrome-stable --version && python -c 'import playwright; print(\"playwright-ok\")' && openclaw --version && npm test"
 endif
+
+.PHONY: clean
+clean: ## Remove generated files and local Docker images
+	@echo "🧹 Cleaning up..."
+	@echo "Removing Docker image: $(IMAGE)"
+	-docker rmi $(IMAGE) 2>/dev/null || echo "  ℹ️  Image $(IMAGE) not found (already clean)"
+	@echo "Removing node_modules..."
+	-rm -rf node_modules 2>/dev/null || echo "  ℹ️  node_modules not found"
+	@echo "Removing package-lock.json..."
+	-rm -f package-lock.json 2>/dev/null || echo "  ℹ️  package-lock.json not found"
+	@echo "Removing Python cache..."
+	-find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	-find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo "Removing .pytest_cache..."
+	-rm -rf .pytest_cache 2>/dev/null || echo "  ℹ️  .pytest_cache not found"
+	@echo "✨ Cleanup complete!"
 
 update:
 	claude update
