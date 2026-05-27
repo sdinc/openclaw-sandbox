@@ -46,6 +46,7 @@ RUN apt-get update \
     libxdamage1 \
     libxrandr2 \
     xdg-utils \
+    plocate \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome Stable (testing cache with mid-file change)
