@@ -25,6 +25,9 @@ curl https://cursor.com/install -fsS | bash
 # requires paid subscription for api key 
 curl -fsSL https://claude.ai/install.sh | bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+## local llm 
+curl -fsSL https://ollama.com/install.sh | sh
+ollama launch claude #choose a local model instead of a cloud based one
 ```
 
 # Build plan (WIP)
@@ -59,12 +62,6 @@ make run-shell-clean
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz
 tar -xf google-cloud-cli-darwin-arm.tar.gz
 ./google-cloud-sdk/install.sh
-```
-
-## local llm 
-```bash
-curl -fsSL https://ollama.com/install.sh | sh
-ollama launch claude #choose a local model instead of a cloud based one
 ```
 
 ## Notes

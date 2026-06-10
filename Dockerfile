@@ -46,6 +46,7 @@ RUN apt-get update \
     libxdamage1 \
     libxrandr2 \
     xdg-utils \
+    plocate \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome Stable (testing cache with mid-file change)
@@ -64,6 +65,9 @@ RUN uv python install 3.12 \
   && ln -sf "$(uv python find 3.12)" /usr/local/bin/python3.12 \
   && ln -sf /usr/local/bin/python3.12 /usr/local/bin/python3 \
   && python3.12 --version
+
+# Bump the version or node installed for use with other tools
+RUN npm install -g npm@11.16.0
 
 # Switch back to node user (default non-root user from base image)
 USER node
