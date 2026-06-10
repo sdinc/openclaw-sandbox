@@ -178,7 +178,10 @@ version-check:
 
 .PHONY: test-basic
 test-basic:
-	node test/basic.js
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) node test/basic.js
 
 .PHONY: test
 test: version-check test-openclaw test-quick test-basic ## Comprehensive test suite: chrome, playwright, openclaw, node, python
