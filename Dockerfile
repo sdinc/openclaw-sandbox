@@ -66,6 +66,9 @@ RUN uv python install 3.12 \
   && ln -sf /usr/local/bin/python3.12 /usr/local/bin/python3 \
   && python3.12 --version
 
+# Bump the version or node installed for use with other tools
+RUN npm install -g npm@11.16.0
+
 # Switch back to node user (default non-root user from base image)
 USER node
 

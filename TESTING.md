@@ -1,62 +1,69 @@
-# OpenClaw Testing Specification (TESTING.md)
+# OpenClaw Testing Strategy (TESTING.md)
 
-This document outlines the testing strategy for OpenClaw, covering unit, integration, end-to-end, and local model validation.
+This document describes the testing approach for the OpenClaw sandbox image.
+The sandbox's purpose is to bundle tools (Node, Python, Chrome, openclaw, gh, etc.)
+into a consistent amd64 container; tests verify that every listed tool is present
+and functional.
 
-## 🎯 Goals
-1.  **Ensure Core Functionality:** Verify that OpenClaw successfully integrates and executes against the defined environment (Node.js, Python, browser automation).
-2.  **Validate Model Integration:** Test the workflow of connecting and interacting with both the primary target local LLM (e.g., an Ollama-managed model) and as a fallback, a general-purpose LLM via a local API wrapper.
-3.  **Maintain Code Health:** Utilize existing comprehensive test suites defined in the `Makefile`.
+## Test Suite
 
-## 🛠️ Prerequisites
-Before running any tests, ensure the following are installed and configured:
-*   Docker and Docker Buildx (for CI/CD parity).
-*   OpenClaw dependencies (via `npm install` and `pip install`).
-*   `ollama` (for running local LLMs).
-*   Required services are running (e.g., database access, if applicable).
+| Target | Scope | Runs in CI |
+|---|---|---|
+| `make test` | Full: version-check + test-openclaw + test-quick + **npm test** | Yes |
+| `make test-basic` | Basic toolchain assertions (test/basic.js) | No (hidden from `make help`) |
+| `make test-quick` | Chrome, Playwright import, openclaw version, npm test | Part of `test` |
+| `make version-check` | Dockerfile / Makefile / package.json / pyproject.toml version sync | Part of `test` |
 
-## 🧪 Existing Test Targets (Makefile)
+## test/basic.js
 
-The existing `Makefile` provides a robust suite of tests. These should be run as the first phase of any testing cycle.
+`test/basic.js` asserts that each tool installed by the image is present,
+executable, and returns a plausible version string. It is run via the hidden
+`make test-basic` target (not shown in `make help`).
 
-### 1. General Smoke Test (`make test-quick`)
-A minimal check to ensure all primary dependencies are accessible and basic functions execute successfully.
-*   **Coverage:** Basic CLI version check, Playwright import check, OpenClaw version check, `npm test` execution.
-*   **Target:** `make test-quick`
+### What it checks
 
-### 2. Comprehensive Full Regression (`make test`)
-The primary test target. This runs full end-to-end checks across the entire stack within a Docker container to guarantee environment consistency.
-*   **Coverage:** Chrome, Playwright, Node.js, Python, OpenClaw CLI, and the full `npm test` suite.
-*   **Target:** `make test`
+- `openclaw --version` — matches `vYYYY.M.P`
+- `node --version` — matches `v\d+`
+- `npm --version` — matches `\d+\.\d+\.\d+`
+- `python --version` — matches `Python \d+`
+- `uv --version` — matches `uv`
+- `gh --version` — matches `\d+\.\d+\.\d+`
+- `zsh --version` — matches `zsh \d+`
+- `google-chrome-stable --version` — present and matches `Google.*Chrome`
+- `import playwright` — present (skipped if Python playwright not yet installed)
 
-### 3. OpenClaw Specific Integration (`make test-openclaw`)
-Focuses solely on the OpenClaw CLI functionality. This ensures the core logic, command handling, and API interactions of the OpenClaw tool itself are sound.
-*   **Coverage:** CLI version, help output, and command availability.
-*   **Target:** `make test-openclaw`
+### Running
 
-## 🌐 Local Model Validation (New Focus Area)
+```bash
+# Inside the container:
+make test-basic
 
-### 1. OpenClaw's Intended Local Model (Recommended)
-The primary flow should be testing the specific local model integration designed for OpenClaw.
-*   **Testing Scope:** Full round-trip flow: User input $\rightarrow$ OpenClaw processing $\rightarrow$ Local Model call $\rightarrow$ Output parsing.
-*   **Test Case:** Write a dedicated integration test that initializes OpenClaw and passes a dummy prompt to the configured local model endpoint.
+# Directly:
+node test/basic.js
+```
 
-### 2. Fallback/Ad-Hoc Local LLM Testing (Using Ollama)
-If the dedicated OpenClaw model connector is difficult to mock or test, or if a general LLM behavior needs validation, we can fall back to testing directly with `ollama`.
-*   **Goal:** Validate the ability to correctly invoke and parse output from a generic local model.
-*   **Execution Example (via shell):**
-    ```bash
-    ollama run claude "simple prompt"
-    ```
-*   **Testing Strategy:**
-    *   **Input:** Use simple, single-prompt inputs that cover all expected prompt formats (e.g., a prompt requiring JSON, a prompt requiring a list, a simple Q&A).
-    *   **Validation:** The test must verify that OpenClaw's *output parsing logic* successfully extracts the data from the unstructured text/JSON output received from the `ollama` stream.
+## Future work
 
-## 📝 Testing Checklist Summary
+- Add a `test-openclaw-integration` target that exercises a real openclaw command
+  (e.g., `openclaw --help` or `openclaw version`) with output validation.
+- Add a `test-chrome` target that verifies Chrome can launch headlessly:
+  `google-chrome-stable --headless --dump-dom https://example.com`.
+- Add a `test-playwright` target that runs a minimal Playwright script against
+  a local test page.
+- Consider adding `make test-dockerfile-changes` to validate new Dockerfile
+  additions (like `plocate`) are present:
+  `docker run --rm $(IMAGE) which plocate`.
+- Replace the current `npm test` (`openclaw --version && echo 'OpenClaw test passed'`)
+  with a real test script once the openclaw integration tests are written.
 
-| Feature/Scope | Test Target | Priority | Notes |
-| :--- | :--- | :--- | :--- |
-| Basic Setup/Dependencies | `make test-quick` | High | Smoke test, always run first. |
-| Full System Integration | `make test` | High | Full regression, critical for CI/CD. |
-| OpenClaw Logic | `make test-openclaw` | High | Verifies the CLI wrapper logic. |
-| Local LLM Integration | Manual/New Test | Critical | Needs dedicated tests for the LLM call path. |
-| Fallback LLM (Ollama) | Manual/New Test | Medium | Use `ollama run` to validate output parsing. |
+## What the current `npm test` does
+
+```json
+"scripts": {
+  "test": "openclaw --version && echo 'OpenClaw test passed'"
+}
+```
+
+This only verifies that the `openclaw` binary exists and prints a success
+message. It does **not** assert output content or test any openclaw behavior.
+Add real assertions to `test/basic.js` and update `package.json` to use them.

@@ -176,8 +176,12 @@ version-check:
 		exit 1; \
 	fi
 
+.PHONY: test-basic
+test-basic:
+	node test/basic.js
+
 .PHONY: test
-test: version-check test-openclaw test-quick ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick test-basic ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \
