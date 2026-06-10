@@ -176,15 +176,22 @@ version-check:
 		exit 1; \
 	fi
 
-.PHONY: test-basic
-test-basic:
+.PHONY: test-py
+test-py:
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) pytest test/test_pwt.py
+
+.PHONY: test-node
+test-node:
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) node test/basic.js
 
 .PHONY: test
-test: version-check test-openclaw test-quick test-basic ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick test-node test-py ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \

@@ -76,7 +76,7 @@ USER node
 ENV VIRTUAL_ENV="/home/node/.venv"
 ENV PATH="/home/node/.venv/bin:${PATH}"
 ENV UV_PROJECT_ENVIRONMENT="/home/node/.venv"
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
 ENV PLAYWRIGHT_BROWSERS_PATH=0
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
@@ -86,6 +86,9 @@ COPY --chown=node:node pyproject.toml pyproject.toml
 
 RUN uv venv "${VIRTUAL_ENV}" --python 3.12
 RUN uv sync --active
+
+# setup playwrite
+RUN playwright install
 
 # Set working directory to /opt/workspace for mounted volumes
 WORKDIR /opt/workspace
