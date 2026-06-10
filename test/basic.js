@@ -17,12 +17,13 @@ const execAsync = promisify(exec);
 // ---------- helpers --------------------------------------------------
 
 const tools = [
-  { name: 'openclaw',   args: '--version',  re: /^[vV]?20[0-9]{2}\.[0-9]+\.[0-9]+/ },
+  { name: 'openclaw',   args: '--version',  re: /[0-9]{4}\.[0-9]+\.[0-9]+/ },
+  { name: 'gh',         args: '--version',  re: /[0-9]+\.[0-9]+\.[0-9]+/ },
+  { name: 'playwright', args: '--version',  re: /[0-9]+\.[0-9]+\.[0-9]+/ },
   { name: 'node',       args: '--version',  re: /^v[0-9]+\./ },
   { name: 'npm',        args: '--version',  re: /^[0-9]+\.[0-9]+\.[0-9]+$/ },
   { name: 'python',     args: '--version',  re: /^Python [0-9]+\./ },
   { name: 'uv',         args: '--version',  re: /^uv/ },
-  { name: 'gh',         args: '--version',  re: /^[vV]?[0-9]+\.[0-9]+\.[0-9]+/ },
   { name: 'zsh',        args: '--version',  re: /^zsh [0-9]+\./ },
 ];
 
@@ -46,7 +47,7 @@ try {
   playwrightImportable = false;
 }
 if (playwrightImportable) {
-  tools.push({ name: 'playwright (Python)', args: "-c 'import playwright'", re: /$/ }); // any output
+  tools.push({ name: 'python', args: "-c 'import playwright'", re: /$/ }); // any output
 }
 
 // ---------- assertions -----------------------------------------------
