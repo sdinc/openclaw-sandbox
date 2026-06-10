@@ -2,7 +2,7 @@ IMAGE ?= openclaw-sandbox:dev
 
 # OpenClaw version - NOTE: Dockerfile is the source of truth
 # This should match the version in Dockerfile FROM line
-OPENCLAW_VERSION ?= 2026.6.1
+OPENCLAW_VERSION ?= 2026.6.5
 
 PLATFORM ?= linux/amd64
 PLATFORM_ARCH ?= amd64
@@ -291,6 +291,11 @@ else
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) sh -c "google-chrome-stable --version && python -c 'import playwright; print(\"playwright-ok\")' && openclaw --version && npm test"
 endif
+
+.PHONY: bump
+bump:
+	@echo "🧹 Bumping version"
+	python3 bump.py
 
 .PHONY: clean
 clean: ## Remove generated files and local Docker images
