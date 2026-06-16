@@ -77,9 +77,12 @@ RUN npm install -g npm@11.16.0
 # Switch back to node user (default non-root user from base image)
 USER node
 
+#pulumi
+RUN curl -fsSL https://get.pulumi.com | sh
+
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"
-ENV PATH="/home/node/.venv/bin:${PATH}"
+ENV PATH="/home/node/.venv/bin:/home/node/.pulumi/bin:${PATH}"
 ENV UV_PROJECT_ENVIRONMENT="/home/node/.venv"
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
 ENV PLAYWRIGHT_BROWSERS_PATH=0
