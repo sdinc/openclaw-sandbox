@@ -46,8 +46,13 @@ RUN apt-get update \
     libxdamage1 \
     libxrandr2 \
     xdg-utils \
-    plocate \
-  && rm -rf /var/lib/apt/lists/*
+    plocate
+
+
+# deps for playwrite to run correctly
+RUN apt-get update \
+    && apt-get install -y \
+    ffmpeg
 
 # Install Google Chrome Stable (testing cache with mid-file change)
 RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
