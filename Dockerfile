@@ -47,6 +47,8 @@ RUN apt-get update \
     libxrandr2 \
     xdg-utils \
     plocate \
+    pkg-config  \
+    libssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome Stable (testing cache with mid-file change)
@@ -69,8 +71,19 @@ RUN uv python install 3.12 \
 # Bump the version or node installed for use with other tools
 RUN npm install -g npm@11.16.0
 
+
+
 # Switch back to node user (default non-root user from base image)
 USER node
+
+# pmat install
+RUN curl -yLsSf https://sh.rustup.rs | sh
+ENV PATH=${PATH}:${HOME}/.cargo/bin
+# need to get cargo and rustc on the path
+# . "$HOME/.cargo/env"
+RUN echo "$HOME/.cargo/env" >> ${HOME}/.zshrc
+# RUN which cargo
+# RUN cargo install pmat
 
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"

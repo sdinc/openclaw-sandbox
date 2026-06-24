@@ -187,8 +187,15 @@ test-basic:
 pmat:
 	pmat repo-score
 
+.PHONY: pmat-docker
+pmat-docker:
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) pmat repo-score
+
 .PHONY: test
-test: version-check test-openclaw test-quick test-basic pmat ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick test-basic pmat-docker ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \
