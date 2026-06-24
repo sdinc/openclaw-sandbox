@@ -6,7 +6,7 @@ This repo is setup to run open-claw in a sandboxed container.
 * ollama( use local models to avoid token cost)
 * claude( does not have a full free with default like cursor so had to go with local model)
 * gh github cli ( mainly writting nice PR descriptions and other github actions manipulation)
-
+* pmat [repo](https://github.com/paiml/paiml-mcp-agent-toolkit) ```cargo install pmat```
 
 # What this installs
 * containerized amd64 development environment
@@ -56,6 +56,9 @@ make build
 make run
 make run-shell-clean
 ```
+
+# Testing
+make test
 
 ## GCP
 ```bash

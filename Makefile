@@ -183,8 +183,12 @@ test-basic:
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) node test/basic.js
 
+.PHONY: pmat
+pmat:
+	pmat repo-score
+
 .PHONY: test
-test: version-check test-openclaw test-quick test-basic ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick test-basic pmat ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \
