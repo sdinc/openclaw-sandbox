@@ -1,7 +1,7 @@
 {
   "name": "brodys-openclaw-sandbox",
   "version": "1.0.0",
-  "openclaw_version": "2026.6.5",
+  "openclaw_version": "2026.6.8",
   "description": "OpenClaw sandbox environment",
   "type": "module",
   "scripts": {
