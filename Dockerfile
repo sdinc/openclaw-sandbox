@@ -84,16 +84,17 @@ RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
 # RUN which cargo
 # RUN cargo install pmat
 
+
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"
-ENV PATH="/home/node/.venv/bin:${HOME}/.cargo/bin:${PATH}"
+ENV PATH="/home/node/.venv/bin:/home/node/.cargo/bin:${PATH}"
 ENV UV_PROJECT_ENVIRONMENT="/home/node/.venv"
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV PLAYWRIGHT_BROWSERS_PATH=0
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 # pmat install
-RUN ${HOME}/.cargo/bin/cargo install pmat
+RUN /home/node/.cargo/bin/cargo install pmat
 
 # Build Python venv in home directory
 WORKDIR /home/node
@@ -107,6 +108,9 @@ WORKDIR /opt/workspace
 
 # Verify openclaw is available (comes from base image)
 RUN openclaw --version
+
+# Verify pmat is installed
+RUN /home/node/.cargo/bin/pmat --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly
 ENTRYPOINT []
