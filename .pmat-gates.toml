@@ -51,7 +51,7 @@ exclude = [
 [tdg]
 # CB-200: 21 functions below A are in non-release crates (test-lib, test-cli, train/cuda)
 # These are complex GPU/inference functions where high cyclomatic complexity is inherent
-min_grade = "F"
+min_grade = "A"
 exclude = [
     ".venv/**",
 ]
