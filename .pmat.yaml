@@ -1,0 +1,18 @@
+comply:
+  thresholds:
+    tdg:
+      min_grade: A
+    dependency_health:
+      max_transitive: 500
+    file_health:
+      critical_lines: 5000
+      warning_lines: 2500
+      min_grade: A
+    verification_ladder:
+      min_level: L3
+      exclude_patterns:
+      - ".venv/**"
+  suppressions:
+    - rules: ["CB-954"]
+      files: ["contracts/**", "docs/roadmaps/**"]
+      reason: "ML model config fields (eos_token, bos_token, embed_tokens) are not secrets — see paiml/paiml-mcp-agent-toolkit#203"

@@ -29,6 +29,15 @@ IN_CONTAINER := $(shell [ "$$(whoami)" = "node" ] && echo 1 || echo 0)
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_-]+:.*## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+ test-fast:
+	@echo "🔨 nothing yet..."
+
+ lint:
+	@echo "🔨 nothing yet..."
+
+ coverage:
+	@echo "🔨 nothing yet..."
+
 .PHONY: build
 build: ## Build the dev image using OpenClaw base
 	@cache_from=""; \
@@ -183,8 +192,19 @@ test-basic:
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) node test/basic.js
 
+.PHONY: pmat
+pmat:
+	pmat repo-score
+
+.PHONY: pmat-docker
+pmat-docker:
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) pmat repo-score
+
 .PHONY: test
-test: version-check test-openclaw test-quick test-basic ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick test-basic pmat-docker ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \

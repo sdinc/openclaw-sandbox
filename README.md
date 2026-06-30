@@ -1,12 +1,14 @@
 This repo is setup to run open-claw in a sandboxed container. 
 
-# Requirements
+# Overview
+
+# Installation
 * docker
 * make
 * ollama( use local models to avoid token cost)
 * claude( does not have a full free with default like cursor so had to go with local model)
 * gh github cli ( mainly writting nice PR descriptions and other github actions manipulation)
-
+* pmat [repo](https://github.com/paiml/paiml-mcp-agent-toolkit) ```cargo install pmat```
 
 # What this installs
 * containerized amd64 development environment
@@ -57,6 +59,9 @@ make run
 make run-shell-clean
 ```
 
+# Testing
+make test
+
 ## GCP
 ```bash
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz
@@ -68,3 +73,15 @@ tar -xf google-cloud-cli-darwin-arm.tar.gz
 
 - The image is built and run as **amd64** (`linux/amd64`) for consistency (including on Apple Silicon).
 - Playwright is installed, but Playwright’s bundled browsers are skipped; use **Chrome Stable** via channel selection.
+
+# Usage
+
+Most parts are driven by makefile.  ```make run``` gives you a shell in the container with all the tools installed and the local directory . volume mounted across
+
+# License
+
+refer to LICENSE.md
+
+# Contributing
+
+refer to CONTRIBUTING.md

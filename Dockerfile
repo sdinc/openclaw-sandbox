@@ -47,6 +47,8 @@ RUN apt-get update \
     libxrandr2 \
     xdg-utils \
     plocate \
+    pkg-config  \
+    libssl-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Google Chrome Stable (testing cache with mid-file change)
@@ -69,16 +71,30 @@ RUN uv python install 3.12 \
 # Bump the version or node installed for use with other tools
 RUN npm install -g npm@11.16.0
 
+
+
 # Switch back to node user (default non-root user from base image)
 USER node
 
+# rust install
+RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
+# need to get cargo and rustc on the path
+# . "$HOME/.cargo/env"
+# RUN echo ". $HOME/.cargo/env" >> ${HOME}/.zshrc
+# RUN which cargo
+# RUN cargo install pmat
+
+
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"
-ENV PATH="/home/node/.venv/bin:${PATH}"
+ENV PATH="/home/node/.venv/bin:/home/node/.cargo/bin:${PATH}"
 ENV UV_PROJECT_ENVIRONMENT="/home/node/.venv"
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV PLAYWRIGHT_BROWSERS_PATH=0
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
+# pmat install
+RUN /home/node/.cargo/bin/cargo install pmat
 
 # Build Python venv in home directory
 WORKDIR /home/node
@@ -92,6 +108,9 @@ WORKDIR /opt/workspace
 
 # Verify openclaw is available (comes from base image)
 RUN openclaw --version
+
+# Verify pmat is installed
+RUN /home/node/.cargo/bin/pmat --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly
 ENTRYPOINT []

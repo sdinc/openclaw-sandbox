@@ -1,0 +1,74 @@
+# PMAT Quality Gate Configuration for aprender
+# ComputeBrick ecosystem - ML inference runtime
+# Updated for PMAT v2.215.0
+
+[gates]
+# Run clippy linter
+run_clippy = true
+
+# Enforce strict clippy (-D warnings)
+clippy_strict = true
+
+# Run test suite
+run_tests = true
+
+# Test timeout in seconds
+test_timeout = 30
+
+# Check code coverage
+check_coverage = true
+
+# Minimum coverage percentage (target: 95%, achieved: 96.94%)
+min_coverage = 50.0
+
+# Check cyclomatic complexity
+check_complexity = true
+
+# Maximum cyclomatic complexity per function
+max_complexity = 30
+
+[exclude]
+# Python helper scripts (one-off utilities, not production code)
+patterns = [
+    ".venv/*"
+]
+
+[verification_ladder]
+# GH-292: L5 (Lean proofs) is research-stage. L3 (falsification tests) is production-ready.
+min_level = "L3"
+
+[dependency_health]
+# GH-292: 75-crate ML framework workspace needs arrow+wgpu+tokio+axum
+# Individual crates stay under 250, but workspace aggregate is ~470
+max_transitive = 500
+
+[file_health]
+# GH-292: Exclude generated files from file health checks
+exclude = [
+    ".venv/**",
+]
+
+[tdg]
+# CB-200: 21 functions below A are in non-release crates (test-lib, test-cli, train/cuda)
+# These are complex GPU/inference functions where high cyclomatic complexity is inherent
+min_grade = "A"
+exclude = [
+    ".venv/**",
+]
+
+[dead_code]
+
+max_dead_code_percent = 30.0
+# Exclude files that are primarily public API surface
+exclude_patterns = [
+]
+
+[compute-brick]
+enabled = true
+require_safety_comments = true
+require_target_feature = true
+cv_threshold_percent = 15.0
+efficiency_threshold_percent = 25.0
+
+[hooks]
+pre_commit = ["pmat comply check --failures-only"]
