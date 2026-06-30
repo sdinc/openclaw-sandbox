@@ -29,6 +29,15 @@ IN_CONTAINER := $(shell [ "$$(whoami)" = "node" ] && echo 1 || echo 0)
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_-]+:.*## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
+ test-fast:
+	@echo "🔨 nothing yet..."
+
+ lint:
+	@echo "🔨 nothing yet..."
+
+ coverage:
+	@echo "🔨 nothing yet..."
+
 .PHONY: build
 build: ## Build the dev image using OpenClaw base
 	@cache_from=""; \
