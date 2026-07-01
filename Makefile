@@ -195,6 +195,7 @@ test-basic:
 .PHONY: pmat
 pmat:
 	pmat repo-score
+	pmat analyze complexity --path .
 
 .PHONY: pmat-docker
 pmat-docker:
@@ -202,6 +203,10 @@ pmat-docker:
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) pmat repo-score
+	docker run --rm --platform=$(PLATFORM) \
+		-v "$(CURDIR)":"$(CONTAINERDIR)" \
+		-w "$(CONTAINERDIR)" \
+		$(IMAGE) pmat analyze complexity --path .
 
 .PHONY: test
 test: version-check test-openclaw test-quick test-basic pmat-docker ## Comprehensive test suite: chrome, playwright, openclaw, node, python
