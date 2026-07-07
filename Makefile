@@ -25,6 +25,12 @@ CONTAINERDIR ?= /opt/workspace
 # Detect if we're already inside the container (user is 'node')
 IN_CONTAINER := $(shell [ "$$(whoami)" = "node" ] && echo 1 || echo 0)
 
+it_flags="$$( [ "$$has_tty" -eq 1 ] && printf '%s' '-it' || printf '%s' '-i' )"; \
+ssh_mount="$$( [ "$(MOUNT_SSH)" = "1" ] && printf '%s' '-v $(HOME)/.ssh:/root/.ssh' || true )"; \
+	zshrc_mount="$$( [ "$(MOUNT_ZSHRC)" = "1" ] && printf '%s' '-v $(HOME)/.zshrc:/root/.zshrc' || true )"; \
+	gh_mount="$$( [ "$(MOUNT_GH)" = "1" ] && printf '%s' '-v $(HOME)/.config/gh:/root/.config/gh' || true )"; \
+	gitconfig_mount="$$( [ "$(MOUNT_GITCONFIG)" = "1" ] && printf '%s' '-v $(HOME)/.gitconfig:/root/.gitconfig' || true )"; \
+
 .PHONY: help
 help: ## Show this help
 	@awk 'BEGIN {FS = ":.*## "}; /^[a-zA-Z0-9_-]+:.*## / {printf "%-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -113,7 +119,8 @@ else
 		$$zshrc_mount \
 		$$gh_mount \
 		$$gitconfig_mount \
-		$(IMAGE) $$run_cmd
+		$(IMAGE) $$run_cmd; \
+		echo "Running: docker run --rm $$it_flags --platform=$(PLATFORM) -v \"$(CURDIR)\":\"$(CONTAINERDIR)\" -w \"$(CONTAINERDIR)\" $$ssh_mount $$zshrc_mount $$gh_mount $$gitconfig_mount $(IMAGE) $$run_cmd"
 endif
 
 .PHONY: run-shell-clean

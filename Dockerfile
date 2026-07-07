@@ -101,6 +101,9 @@ WORKDIR /opt/workspace
 # Verify openclaw is available (comes from base image)
 RUN openclaw --version
 
+# IBM bob
+RUN curl -fsSL https://bob.ibm.com/download/bobshell.sh  |  bash
+
 # Verify pmat is installed
 #RUN /home/node/.cargo/bin/pmat --version
 
