@@ -69,13 +69,22 @@ RUN uv python install 3.12 \
   && python3.12 --version
 
 # Bump the version or node installed for use with other tools
-RUN npm install -g npm@11.16.0
+RUN npm install -g npm@11.18.0
+
+# IBM bob
+# RUN curl -fsSL https://bob.ibm.com/download/bobshell.sh  |  bash --pm pnpm
+# curl -fsSL https://bob.ibm.com/download/bobshell.sh > bobshell.sh
+# chmod 755 bobshell.sh
+# ./bobshell.sh --pm pnpm
+# pnpm setup
+ENV PATH="/root/.local/share/pnpm/bin:${PATH}"
+RUN curl -LsSf https://bob.ibm.com/download/bobshell.sh | bash -s -- --pm pnpm
 
 # Switch back to node user (default non-root user from base image)
 USER node
 
 # rust install
-RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
+# RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
 
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"
@@ -101,8 +110,8 @@ WORKDIR /opt/workspace
 # Verify openclaw is available (comes from base image)
 RUN openclaw --version
 
-# IBM bob
-RUN curl -fsSL https://bob.ibm.com/download/bobshell.sh  |  bash
+
+
 
 # Verify pmat is installed
 #RUN /home/node/.cargo/bin/pmat --version
