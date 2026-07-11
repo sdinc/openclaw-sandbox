@@ -22,6 +22,9 @@ This repo is setup to run open-claw in a sandboxed container.
 # Copy Paste quick install
 
 ```bash 
+# antigravity
+RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
+
 # note once you run this and setup your account you only have 
 curl https://cursor.com/install -fsS | bash
 # requires paid subscription for api key 
@@ -51,18 +54,41 @@ Chrome Stable is installed from Google's official repository and Playwright is c
 
 This ensures consistent browser behavior and reduces image size by avoiding duplicate browser installations.
 
+# Configuration
+
+The workspace includes a [`settings.json`](./settings.json) template which configures telemetry settings, trusted workspaces, and pre-approved command execution permissions for the Google Antigravity CLI (`agy`).
+
+For `agy` to recognize and use these settings, copy or link this file to the required configuration path:
+```bash
+mkdir -p ~/.gemini/antigravity-cli
+cp settings.json ~/.gemini/antigravity-cli/settings.json
+```
+
 # Usage
 
+Most parts are driven by the `Makefile`. To get a shell in the sandboxed container with all tools installed and the workspace volume-mounted:
 ```bash
 make build
 make run
+```
+To run a clean shell (no saved container state/history):
+```bash
 make run-shell-clean
 ```
 
-# Testing
-make test
+For advanced developer and agent workflows, including cached Docker builds and automatic version bumping, please refer to [`AGENTS.md`](./AGENTS.md).
 
-## GCP
+# Testing
+
+You can run the test suite locally with:
+```bash
+make test
+```
+Refer to [`AGENTS.md`](./AGENTS.md) for faster testing and Docker cache details.
+
+## GCP Setup
+
+If you need the Google Cloud SDK:
 ```bash
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-darwin-arm.tar.gz
 tar -xf google-cloud-cli-darwin-arm.tar.gz
@@ -71,17 +97,13 @@ tar -xf google-cloud-cli-darwin-arm.tar.gz
 
 ## Notes
 
-- The image is built and run as **amd64** (`linux/amd64`) for consistency (including on Apple Silicon).
-- Playwright is installed, but Playwright’s bundled browsers are skipped; use **Chrome Stable** via channel selection.
-
-# Usage
-
-Most parts are driven by makefile.  ```make run``` gives you a shell in the container with all the tools installed and the local directory . volume mounted across
+- The Docker image is built and run as **amd64** (`linux/amd64`) for consistency across platforms (including Apple Silicon).
+- Playwright is installed, but Playwright’s bundled browsers are skipped; Chrome Stable is used from the system.
 
 # License
 
-refer to LICENSE.md
+Refer to [`LICENSE.md`](./LICENSE.md).
 
 # Contributing
 
-refer to CONTRIBUTING.md
+Refer to [`CONTRIBUTING.md`](./CONTRIBUTING.md).

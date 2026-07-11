@@ -1,0 +1,24 @@
+{
+  "colorScheme": "dark",
+  "enableTelemetry": false,
+  "gcp": {
+    "project": "seaglasspro",
+    "location": "us"
+  },
+  "permissions": {
+    "allow": [
+      "command(make version-check)",
+      "command(make test-quick)",
+      "command(make test)",
+      "command(python3 bump.py --help)",
+      "command(python3 bump.py \u003c\u003cEOF)",
+      "command(python3 bump.py --beta \u003c\u003cEOF)",
+      "command(make bump BETA=1 \u003c\u003cEOF)",
+      "command(git diff)"
+    ]
+  },
+  "trustedWorkspaces": [
+    "/home/node",
+    "/opt/workspace"
+  ]
+}

@@ -83,12 +83,20 @@ RUN npm install -g npm@11.18.0
 # Switch back to node user (default non-root user from base image)
 USER node
 
+
+# antigravity
+RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
+
+# cursor
+RUN curl https://cursor.com/install -fsS | bash
+
+
 # rust install
 # RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
 
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"
-ENV PATH="/home/node/.venv/bin:/home/node/.cargo/bin:${PATH}"
+ENV PATH="/home/node/.venv/bin:/home/node/.cargo/bin:/home/node/.local/bin:/home/.local/bin:${PATH}"
 ENV UV_PROJECT_ENVIRONMENT="/home/node/.venv"
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 ENV PLAYWRIGHT_BROWSERS_PATH=0

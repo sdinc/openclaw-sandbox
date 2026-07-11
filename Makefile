@@ -138,7 +138,7 @@ endif
 version-check:
 	@echo "🔍 Checking OpenClaw version consistency..."
 	@echo ""
-	@dockerfile_version=$$(grep -E '^FROM ghcr.io/openclaw/openclaw:' Dockerfile | sed -E 's/.*:([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/'); \
+	@dockerfile_version=$$(grep -E '^FROM ghcr.io/openclaw/openclaw:' Dockerfile | sed -E 's/.*:([0-9a-zA-Z\.-]+)-amd64/\1/'); \
 	if [ -z "$$dockerfile_version" ]; then \
 		echo "❌ ERROR: Could not extract version from Dockerfile"; \
 		exit 1; \
@@ -146,14 +146,14 @@ version-check:
 	echo "📋 Source of Truth (Dockerfile): $$dockerfile_version"; \
 	echo ""; \
 	all_match=true; \
-	makefile_version=$$(grep -E '^OPENCLAW_VERSION \?=' Makefile | sed -E 's/.*= ([0-9]+\.[0-9]+\.[0-9]+).*/\1/'); \
+	makefile_version=$$(grep -E '^OPENCLAW_VERSION \?=' Makefile | sed -E 's/.*= ([0-9a-zA-Z\.-]+).*/\1/'); \
 	if [ "$$makefile_version" = "$$dockerfile_version" ]; then \
 		echo "✅ Makefile: $$makefile_version (matches)"; \
 	else \
 		echo "❌ Makefile: $$makefile_version (expected $$dockerfile_version)"; \
 		all_match=false; \
 	fi; \
-	package_json_version=$$(grep -E '"openclaw_version"' package.json 2>/dev/null | sed -E 's/.*"openclaw_version": "([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'); \
+	package_json_version=$$(grep -E '"openclaw_version"' package.json 2>/dev/null | sed -E 's/.*"openclaw_version": "([0-9a-zA-Z\.-]+)".*/\1/'); \
 	if [ -z "$$package_json_version" ]; then \
 		echo "❌ package.json: openclaw_version field not found (expected $$dockerfile_version)"; \
 		all_match=false; \
@@ -163,7 +163,7 @@ version-check:
 		echo "❌ package.json: $$package_json_version (expected $$dockerfile_version)"; \
 		all_match=false; \
 	fi; \
-	pyproject_version=$$(grep -E 'openclaw_version = ' pyproject.toml 2>/dev/null | sed -E 's/.*= "([0-9]+\.[0-9]+\.[0-9]+)".*/\1/'); \
+	pyproject_version=$$(grep -E 'openclaw_version = ' pyproject.toml 2>/dev/null | sed -E 's/.*= "([0-9a-zA-Z\.-]+)".*/\1/'); \
 	if [ -z "$$pyproject_version" ]; then \
 		echo "❌ pyproject.toml: openclaw_version field not found (expected $$dockerfile_version)"; \
 		all_match=false; \
@@ -194,10 +194,14 @@ version-check:
 
 .PHONY: test-basic
 test-basic:
+ifeq ($(IN_CONTAINER),1)
+	node test/basic.js
+else
 	docker run --rm --platform=$(PLATFORM) \
 		-v "$(CURDIR)":"$(CONTAINERDIR)" \
 		-w "$(CONTAINERDIR)" \
 		$(IMAGE) node test/basic.js
+endif
 
 .PHONY: pmat
 pmat:
@@ -332,9 +336,9 @@ else
 endif
 
 .PHONY: bump
-bump:
+bump: ## Bump OpenClaw version (use BETA=1 for beta/pre-releases, YES=1 for non-interactive)
 	@echo "🧹 Bumping version"
-	python3 bump.py
+	python3 bump.py $(if $(BETA),--beta,) $(if $(YES),--yes,) $(BUMP_ARGS)
 
 .PHONY: clean
 clean: ## Remove generated files and local Docker images
