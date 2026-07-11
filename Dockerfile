@@ -77,8 +77,8 @@ RUN npm install -g npm@11.18.0
 # chmod 755 bobshell.sh
 # ./bobshell.sh --pm pnpm
 # pnpm setup
-ENV PATH="/root/.local/share/pnpm/bin:${PATH}"
-RUN curl -LsSf https://bob.ibm.com/download/bobshell.sh | bash -s -- --pm pnpm
+# ENV PATH="/root/.local/share/pnpm/bin:${PATH}"
+# RUN curl -LsSf https://bob.ibm.com/download/bobshell.sh | bash -s -- --pm pnpm
 
 # Switch back to node user (default non-root user from base image)
 USER node
@@ -109,9 +109,6 @@ WORKDIR /opt/workspace
 
 # Verify openclaw is available (comes from base image)
 RUN openclaw --version
-
-
-
 
 # Verify pmat is installed
 #RUN /home/node/.cargo/bin/pmat --version
