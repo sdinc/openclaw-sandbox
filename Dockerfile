@@ -83,13 +83,11 @@ RUN npm install -g npm@11.18.0
 # Switch back to node user (default non-root user from base image)
 USER node
 
-
 # antigravity
 RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 
 # cursor
 RUN curl https://cursor.com/install -fsS | bash
-
 
 # rust install
 # RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
