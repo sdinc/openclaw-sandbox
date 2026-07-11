@@ -14,7 +14,10 @@
       "command(python3 bump.py \u003c\u003cEOF)",
       "command(python3 bump.py --beta \u003c\u003cEOF)",
       "command(make bump BETA=1 \u003c\u003cEOF)",
-      "command(git diff)"
+      "command(git diff)",
+      "command(make build-cached)",
+      "command(make test-openclaw)",
+      "command(git status)"
     ]
   },
   "trustedWorkspaces": [
