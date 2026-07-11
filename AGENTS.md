@@ -32,6 +32,9 @@ When making changes to this repository, follow this workflow:
 - `make test` - Full test suite with version checks
 - `make test-quick` - Fast smoke test (no version check)
 - `make test-openclaw` - OpenClaw-specific functionality tests
+- `make bump` - Bump OpenClaw version across all codebase files (`Dockerfile`, `Makefile`, `package.json`, `pyproject.toml`)
+  - Set `BETA=1` to allow bumping to beta/pre-release versions (e.g., `make bump BETA=1`)
+  - Set `YES=1` to auto-approve the version bump non-interactively (e.g., `make bump YES=1`)
 - `make clean` - Remove generated files and Docker images
 - `make build-cached-cleanup` - Remove buildx builder and cache
 
@@ -42,8 +45,22 @@ When making changes to this repository, follow this workflow:
 **First Time Setup:**
 The `build-cached` target will automatically create the `openclaw-builder` buildx builder on first use.
 
+### Version Bumping
+
+The repository supports automated version bumping using `bump.py` via `make bump`.
+- It fetches the latest OpenClaw release tag from GitHub and replaces the old version in all relevant files.
+- To include beta/pre-release versions, run:
+  ```bash
+  make bump BETA=1
+  ```
+- To run non-interactively (useful for automation):
+  ```bash
+  make bump YES=1
+  ```
+
 ### Agent Notes
 - **ALWAYS run `make build-cached && make test` before git commit**
+- To configure trusted workspaces and auto-approved commands for the Google Antigravity CLI (`agy`), refer to the **Configuration** section in [`README.md`](./README.md) regarding `settings.json`.
 - Prefer running tools inside the container via `make run cmd="..."` (e.g. `make run cmd="gh release create ..."`).
 - Do not run `git` commands via `make run` (run git on the host).
 - The container runs as `root` by default, so home is `/root`.
