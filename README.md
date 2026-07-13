@@ -77,6 +77,50 @@ To run a clean shell (no saved container state/history):
 make run-shell-clean
 ```
 
+## Running from Docker Hub (Image Only)
+
+If you don't want to clone the repository or build the image locally, you can pull and run the pre-built image directly from Docker Hub:
+
+```bash
+docker pull spudnicdocker/openclaw-sandbox:latest
+```
+
+### Run Command
+
+Since the container requires access to your workspace and configurations to work seamlessly, the run command mounts your current directory, SSH keys, shell settings, and GitHub configurations:
+
+```bash
+docker run --rm -it --platform=linux/amd64 \
+  -v "$(pwd)":"/opt/workspace" \
+  -w "/opt/workspace" \
+  -v "$HOME/.ssh":"/root/.ssh" \
+  -v "$HOME/.zshrc":"/root/.zshrc" \
+  -v "$HOME/.config/gh":"/root/.config/gh" \
+  -v "$HOME/.gitconfig":"/root/.gitconfig" \
+  spudnicdocker/openclaw-sandbox:latest zsh
+```
+
+### Recommended Shell Aliases
+
+Because the command has many parameters, we highly recommend setting up an alias in your shell configuration (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.config/fish/config.fish`):
+
+#### For Bash/Zsh:
+Add this to your `~/.bashrc` or `~/.zshrc`:
+```bash
+alias openclaw-sandbox='docker run --rm -it --platform=linux/amd64 -v "$(pwd)":"/opt/workspace" -w "/opt/workspace" -v "$HOME/.ssh":"/root/.ssh" -v "$HOME/.zshrc":"/root/.zshrc" -v "$HOME/.config/gh":"/root/.config/gh" -v "$HOME/.gitconfig":"/root/.gitconfig" spudnicdocker/openclaw-sandbox:latest zsh'
+```
+
+#### For Fish:
+Add this to your `~/.config/fish/config.fish`:
+```fish
+alias openclaw-sandbox="docker run --rm -it --platform=linux/amd64 -v (pwd):/opt/workspace -w /opt/workspace -v \$HOME/.ssh:/root/.ssh -v \$HOME/.zshrc:/root/.zshrc -v \$HOME/.config/gh:/root/.config/gh -v \$HOME/.gitconfig:/root/.gitconfig spudnicdocker/openclaw-sandbox:latest zsh"
+```
+
+Once configured, simply run this command in any workspace directory to spin up your sandboxed OpenClaw environment:
+```bash
+openclaw-sandbox
+```
+
 For advanced developer and agent workflows, including cached Docker builds and automatic version bumping, please refer to [`AGENTS.md`](./AGENTS.md).
 
 # Testing
