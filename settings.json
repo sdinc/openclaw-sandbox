@@ -22,6 +22,7 @@
   },
   "trustedWorkspaces": [
     "/home/node",
-    "/opt/workspace"
+    "/opt/workspace",
+    "/home/brody/workspace/github/sdinc/openclaw-sandbox"
   ]
 }

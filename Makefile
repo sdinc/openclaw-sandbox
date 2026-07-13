@@ -1,4 +1,6 @@
 IMAGE ?= openclaw-sandbox:dev
+PUBLISH_VERSION ?= 2026.07.1a
+DOCKERHUB_REPO ?= spudnicdocker/openclaw-sandbox
 
 # OpenClaw version - NOTE: Dockerfile is the source of truth
 # This should match the version in Dockerfile FROM line
@@ -59,10 +61,12 @@ build: ## Build the dev image using OpenClaw base
 		--build-arg PLATFORM_ARCH=$(PLATFORM_ARCH) \
 		$$cache_from \
 		$$cache_to \
-		-t $(IMAGE) .
+		-t $(IMAGE) \
+		-t $(DOCKERHUB_REPO):latest \
+		-t $(DOCKERHUB_REPO):$(PUBLISH_VERSION) .
 
 .PHONY: build-cached
-build-cached: ## Build with buildx cache (requires buildx builder setup)
+build-cached: # Build with buildx cache (requires buildx builder setup)
 	@echo "🔨 Building with buildx cache..."
 	@if ! docker buildx ls | grep -q "openclaw-builder"; then \
 		echo "📦 Creating buildx builder 'openclaw-builder'..."; \
@@ -77,18 +81,45 @@ build-cached: ## Build with buildx cache (requires buildx builder setup)
 		--build-arg PLATFORM_ARCH=$(PLATFORM_ARCH) \
 		--cache-from type=local,src=/tmp/.buildx-cache \
 		--cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
-		-t $(IMAGE) .
+		-t $(IMAGE) \
+		-t $(DOCKERHUB_REPO):latest \
+		-t $(DOCKERHUB_REPO):$(PUBLISH_VERSION) .
 	@echo "♻️  Rotating cache..."
 	@rm -rf /tmp/.buildx-cache
 	@mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 	@echo "✨ Build complete with cache!"
 
 .PHONY: build-cached-cleanup
-build-cached-cleanup: ## Remove buildx builder and cache
+build-cached-cleanup: # Remove buildx builder and cache
 	@echo "🧹 Cleaning up buildx builder and cache..."
 	-docker buildx rm openclaw-builder 2>/dev/null || echo "  ℹ️  Builder not found"
 	-rm -rf /tmp/.buildx-cache /tmp/.buildx-cache-new 2>/dev/null || echo "  ℹ️  Cache not found"
 	@echo "✨ Cleanup complete!"
+
+
+.PHONY: auth
+auth: ## Log in to Docker Hub (use REGISTRY=... for other registries)
+	docker login $(REGISTRY)
+.PHONY: publish
+publish: ## Publish Docker images and push git tags to origin (only on main branch)
+	@current_branch=$$(git rev-parse --abbrev-ref HEAD); \
+	if [ "$$current_branch" != "main" ]; then \
+		echo "❌ Error: Must be on 'main' branch to publish. Current branch: $$current_branch"; \
+		exit 1; \
+	fi
+	@if ! docker image inspect $(DOCKERHUB_REPO):$(PUBLISH_VERSION) >/dev/null 2>&1; then \
+		echo "❌ Error: Local docker image '$(DOCKERHUB_REPO):$(PUBLISH_VERSION)' not found. Please run 'make build' or 'make build-cached' first."; \
+		exit 1; \
+	fi
+	@echo "🚀 Pushing Docker images to Docker Hub..."
+	docker push $(DOCKERHUB_REPO):$(PUBLISH_VERSION)
+	docker push $(DOCKERHUB_REPO):latest
+	@echo "🏷️  Tagging and pushing git tags..."
+	git tag -f v$(PUBLISH_VERSION)
+	git push -f origin v$(PUBLISH_VERSION)
+	git tag -f latest
+	git push -f origin latest
+	@echo "✨ Published successfully!"
 
 
 .PHONY: run

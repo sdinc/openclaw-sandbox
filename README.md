@@ -14,8 +14,9 @@ This repo is setup to run open-claw in a sandboxed container.
 * containerized amd64 development environment
 * python 
 * open claw cli
-* claude cli
-* cursor cli
+* claude cli claude
+* cursor cli cursor-agent
+* antigravity cli agy
 * ollama
 * other development deps
 
