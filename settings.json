@@ -7,17 +7,16 @@
   },
   "permissions": {
     "allow": [
-      "command(make version-check)",
-      "command(make test-quick)",
-      "command(make test)",
-      "command(python3 bump.py --help)",
-      "command(python3 bump.py \u003c\u003cEOF)",
-      "command(python3 bump.py --beta \u003c\u003cEOF)",
-      "command(make bump BETA=1 \u003c\u003cEOF)",
+      "command(make *)",
       "command(git diff)",
-      "command(make build-cached)",
-      "command(make test-openclaw)",
-      "command(git status)"
+      "command(git status)",
+      "command(python3 bump.py *)"
+    ],
+    "deny": [
+      "command(git push)"
+    ],
+    "ask": [
+      "command(*)"
     ]
   },
   "trustedWorkspaces": [
