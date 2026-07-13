@@ -1,14 +1,5 @@
-The container that is built from the below is available for download from https://hub.docker.com/r/spudnicdocker/openclaw-sandbox
-
 # Overview
-
-# Installation
-* docker
-* make
-* ollama( use local models to avoid token cost)
-* claude( does not have a full free with default like cursor so had to go with local model)
-* gh github cli ( mainly writting nice PR descriptions and other github actions manipulation)
-* pmat [repo](https://github.com/paiml/paiml-mcp-agent-toolkit) ```cargo install pmat```
+The container that is built from the below is available for download from https://hub.docker.com/r/spudnicdocker/openclaw-sandbox
 
 # What this installs
 * containerized amd64 development environment
@@ -24,8 +15,7 @@ The container that is built from the below is available for download from https:
 
 ```bash 
 # antigravity
-RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
-
+curl -fsSL https://antigravity.google/cli/install.sh | bash
 # note once you run this and setup your account you only have 
 curl https://cursor.com/install -fsS | bash
 # requires paid subscription for api key 
@@ -38,12 +28,11 @@ ollama launch claude #choose a local model instead of a cloud based one
 
 # Build plan (WIP)
 
-- **Base image**: `node:24`
+- **Base image**: `openclaw:*`
 - **Python**: Install **Python 3.12** via `uv` inside the image
 - **Shell**: `zsh` in-container (used by `make run`)
 - **Browser**: Google **Chrome Stable** (amd64)
 - **Web automation**: Python **Playwright** (configured to use system Chrome)
-- **OpenClaw**: `openclaw` CLI installed via npm
 - **Goal**: A minimal dev container that has Node 24 + Python 3.12 available (`python3.12` / `python3`)
 
 ## Chrome & Playwright Configuration
