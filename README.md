@@ -1,4 +1,4 @@
-This repo is setup to run open-claw in a sandboxed container. 
+The container that is built from the below is available for download from https://hub.docker.com/r/spudnicdocker/openclaw-sandbox
 
 # Overview
 
