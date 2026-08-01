@@ -90,7 +90,7 @@ RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 RUN curl https://cursor.com/install -fsS | bash
 
 # rust install
-# RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
+RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
 
 # Install Python deps in home directory so they persist
 ENV VIRTUAL_ENV="/home/node/.venv"
@@ -101,7 +101,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH=0
 ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 # pmat install
-#RUN /home/node/.cargo/bin/cargo install pmat
+RUN /home/node/.cargo/bin/cargo install pmat
 
 # Build Python venv in home directory
 WORKDIR /home/node
@@ -117,7 +117,7 @@ WORKDIR /opt/workspace
 RUN openclaw --version
 
 # Verify pmat is installed
-#RUN /home/node/.cargo/bin/pmat --version
+RUN /home/node/.cargo/bin/pmat --version
 
 # Ensure `docker run <image> <cmd>` runs the command directly
 ENTRYPOINT []
