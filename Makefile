@@ -251,7 +251,7 @@ pmat-docker:
 		$(IMAGE) pmat analyze complexity --path .
 
 .PHONY: test
-test: version-check test-openclaw test-quick test-basic ## Comprehensive test suite: chrome, playwright, openclaw, node, python
+test: version-check test-openclaw test-quick test-basic pmat-docker ## Comprehensive test suite: chrome, playwright, openclaw, node, python
 ifeq ($(IN_CONTAINER),1)
 	@echo "Already in container, running tests directly..." && \
 	echo "=== Testing Chrome ===" && \
