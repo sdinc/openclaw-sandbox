@@ -86,11 +86,6 @@ USER node
 # antigravity
 RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 
-# cursor
-RUN curl https://cursor.com/install -fsS | bash
-
-
-
 # rust install
 RUN curl -LsSf https://sh.rustup.rs | sh -s -- -y
 
