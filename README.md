@@ -15,9 +15,6 @@ The container that is built from the below is available for download from https:
 ```bash 
 # antigravity
 curl -fsSL https://antigravity.google/cli/install.sh | bash
-# note once you run this and setup your account you only have 
-curl https://cursor.com/install -fsS | bash
-# requires paid subscription for api key 
 curl -fsSL https://claude.ai/install.sh | bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 ## local llm 
