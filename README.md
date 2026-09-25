@@ -6,7 +6,6 @@ The container that is built from the below is available for download from https:
 * python 
 * open claw cli
 * claude cli claude
-* cursor cli cursor-agent
 * antigravity cli agy
 * ollama
 * other development deps
